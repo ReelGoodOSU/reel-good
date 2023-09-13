@@ -1,3 +1,4 @@
 FROM node:bullseye
 
+# Default port for React
 EXPOSE 3000
