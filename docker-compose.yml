@@ -1,0 +1,28 @@
+services:
+  # Define the Flask Backend container, name on the network is "api"
+  api:
+    # Defines how to build the container
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    image: flask:1.0
+    # Bind the volume with the python script to the container, so we can make changes on the fly
+    volumes:
+      - type: bind
+        source: ./api
+        target: /app
+    # Must wait for the volume to bind before executing the script
+    entrypoint: [ "bash", "-c", "sleep 1 && cd /app && ./app.py" ]
+  # Container for react frontend
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    image: react:1.0
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+    entrypoint: [ "bash", "-c", "sleep 1 && cd /app/ && npm start" ]
+    ports:
+      - "3000:3000"
