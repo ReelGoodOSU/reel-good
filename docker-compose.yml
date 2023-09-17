@@ -9,10 +9,12 @@ services:
       dockerfile: Dockerfile.flask
     image: ghcr.io/reelgoodosu/flask
     # Bind the volume with the python script to the container, so we can make changes on the fly
+    # Also give backend access to the Elasticsearch certs volume
     volumes:
       - type: bind
         source: ./api
         target: /app
+      - certs:/app/certs
     # Must wait for the volume to bind before executing the script
     working_dir: /app
     entrypoint: [ "bash", "-c", "sleep 1 && ./app.py" ]
