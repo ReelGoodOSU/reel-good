@@ -4,11 +4,19 @@ import './App.css';
 
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
+  const [esResponse, setESResponse] = useState();
 
   useEffect(() => {
+    // Get current time from backend
     fetch('/time').then((response) => response.json())
     .then((data) => {
       setCurrentTime(data.time);
+    });
+
+    // Request info on the elasticsearch container
+    fetch('/info').then((response) => response.text())
+    .then((data) => {
+      setESResponse(data)
     });
   }, []);
 
@@ -28,6 +36,7 @@ function App() {
           Learn React
         </a>
         <p>The time is { currentTime }.</p>
+        <p>Response from ElasticSearch { esResponse } </p>
       </header>
     </div>
   );
