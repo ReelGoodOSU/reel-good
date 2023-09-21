@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-import random
-from flask import Flask, jsonify
+from flask import Flask
 from elasticsearch import Elasticsearch
 import time
 
