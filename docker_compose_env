@@ -2,7 +2,7 @@
 ELASTIC_PASSWORD='cse5914_capstone'
 
 # Password for the 'kibana_system' user (at least 6 characters)
-KIBANA_PASSWORD='doesnt_matter'
+KIBANA_PASSWORD='cse5914_capstone'
 
 # Version of Elastic products
 STACK_VERSION=8.9.1
