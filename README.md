@@ -17,7 +17,7 @@ $ docker run --rm -it -u node -v ./:/app ghcr.io/reelgoodosu/react:latest bash
 
 # Issue the following commands inside the container
 $ cd /app
-$ npm install
+$ npm ci
 ```
 
 The following commands will install the necessary dependicies for React within the working directory of the repository. If we were building containers for production we would probably just add the node modules to the container along with the scripts for the frontend but since we will probably change things during development I decided to make this all just on a local volume rather than inside the container.
