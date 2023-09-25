@@ -1,21 +1,131 @@
 // Sample.js
 
-import React from 'react'
-import { Link } from 'react-router-dom'
-import '../App.css'
+import React, { useReducer, useState } from "react";
+import { Link } from "react-router-dom";
+import "../App.css";
 
-function SamplePage () {
+const formReducer = (state, event) => {
+  if (event.reset) {
+    return {
+      apple: "",
+      count: 0,
+      name: "",
+      "gift-wrap": false,
+    };
+  }
+  return {
+    ...state,
+    [event.name]: event.value,
+  };
+};
+
+function MyForm() {
+  const [formData, setFormData] = useReducer(formReducer, {
+    count: 69,
+    name: "Bruh",
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+
+    setTimeout(() => {
+      setSubmitting(false);
+      setFormData({
+        reset: true,
+      });
+    }, 3000);
+    /* fetch("/search")
+      .then((response) => response.json())
+      .then((data) => {
+
+      });*/
+  };
+
+  const handleChange = (event) => {
+    const isCheckbox = event.target.type === "checkbox";
+    setFormData({
+      name: event.target.name,
+      value: isCheckbox ? event.target.checked : event.target.value,
+    });
+  };
+
   return (
-    <div className='App'>
-      <header className='App-header'>
-        <h1>Welcome to the Sample Page</h1>
-        <p>This is your sample page content.</p>
-        <Link to='/' className='App-link'>
-          Back to Home Page
-        </Link>
-      </header>
+    <div className="wrapper">
+      <h1>How About Them Apples</h1>
+      {submitting && (
+        <div>
+          You are submitting the following
+          <ul>
+            {Object.entries(formData).map(([name, value]) => (
+              <li key={name}>
+                <strong>{name}</strong>: {value.toString()}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <form onSubmit={handleSubmit}>
+        <fieldset>
+          <label>
+            Name:
+            <input
+              name="name"
+              onChange={handleChange}
+              value={formData.name || ""}
+            />
+          </label>
+        </fieldset>
+        <fieldset>
+          <label>
+            <p>Apples</p>
+            <select
+              name="apple"
+              onChange={handleChange}
+              value={formData.apple || ""}
+            >
+              <option value="">--Please choose an option--</option>
+              <option value="fuji">Fuji</option>
+              <option value="jonathan">Jonathan</option>
+              <option value="honey-crisp">Honey Crisp</option>
+            </select>
+          </label>
+          <label>
+            <p>Count</p>
+            <input
+              type="number"
+              name="count"
+              onChange={handleChange}
+              step="1"
+              value={formData.count || ""}
+            />
+          </label>
+          <label>
+            <p>Gift Wrap</p>
+            <input
+              type="checkbox"
+              name="gift-wrap"
+              onChange={handleChange}
+              checked={formData["gift-wrap"] || false}
+            />
+          </label>
+        </fieldset>
+        <button type="submit">Submit</button>
+      </form>
     </div>
-  )
+  );
 }
 
-export default SamplePage
+function SamplePage() {
+  return (
+    <div className="App">
+      <Link to="/" className="App-link">
+        Back to Home Page
+      </Link>
+      <MyForm />
+    </div>
+  );
+}
+
+export default SamplePage;
