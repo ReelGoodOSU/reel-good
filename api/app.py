@@ -28,24 +28,29 @@ def get_elastic_info():
     return ES.info(pretty=True).body
 
 
-# TEMP NOTE: WE WILL BE USING GET REQUEST FOR SEARCHING BECAUSE WE ARE NOT MODIFY DATA, WE ARE SEARCHING AND GETTING DATA BACK
 @app.route("/search")
 def search_elastic():
     global ES
     # TODO HOW SHOULD I FORMAT AND RETURN THE DATA
-    request.args
-    query = request.args.get('query')
-    return ES.search(index="movies", query={"match": {"credits": {"query": query}}}).body
+    # Grab the search query and the field to search by (title, credits, runtime, etc)
+    query = request.args.get("search_query")
+    topic = request.args.get("search_by")
+    print(f"Backend Debug: search_query: {query}")
+    print(f"Backend Debug: search_by: {topic}")
+
+    # Send query and return the top 10 hits back
+    resp = ES.search(index="movies", query={"match": {topic: {"query": query}}})
+    return resp["hits"]["hits"]
 
 
 """
 For the backend this is what I need to know to handle a search query and returning the result
 
-1. How is the data from the search form returned to flask?
+1. How is the data from the search form returned to flask? - At the moment I am assuming we use a GET request.
+    We might need to use POST if too much data is being passed, or if we want to send JSON data
 2. How do I determine the field I perform the query on (actor, genre, title, etc)?
 3. How do I know the name of fields of data items?
 4. How should I format the data to be returned?
-5.
 """
 
 
