@@ -1,19 +1,18 @@
-import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import SamplePage from './pages/SamplePage'
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import SamplePage from "./pages/SamplePage";
+import "react-bootstrap";
 
-function App () {
+function App() {
   return (
-    <BrowserRouter>
-      <div className='App'>
-        <Routes>
-          <Route exact path='/' element={<HomePage />} />
-          <Route exact path='/sample' element={<SamplePage />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/sample" element={<SamplePage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
