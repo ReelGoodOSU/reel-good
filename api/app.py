@@ -35,11 +35,21 @@ def search_elastic():
     # Grab the search query and the field to search by (title, credits, runtime, etc)
     query = request.args.get("search_query")
     topic = request.args.get("search_by")
+    # TODO PROBABLY DON'T HARDCODE THIS VALUE
+    size = request.args.get("size") or 25
     print(f"Backend Debug: search_query: {query}")
     print(f"Backend Debug: search_by: {topic}")
 
-    # Send query and return the top 10 hits back
-    resp = ES.search(index="movies", query={"match": {topic: {"query": query}}})
+    # Send query and return the top size hits back (sorted by popularity so we actually
+    # get good search results)
+    resp = ES.search(
+        index="movies",
+        query={
+            "match": {topic: query},
+        },
+        sort=[{"popularity": {"order": "desc"}}],
+        size=size,
+    )
     return resp["hits"]["hits"]
 
 
