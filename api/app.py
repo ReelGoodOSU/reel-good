@@ -45,7 +45,12 @@ def search_elastic():
     resp = ES.search(
         index="movies",
         query={
-            "match": {topic: query},
+            "match": {
+                topic: {
+                    "query": query,
+                    "operator": "AND",
+                },
+            },
         },
         sort=[{"popularity": {"order": "desc"}}],
         size=size,
