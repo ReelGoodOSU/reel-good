@@ -1,21 +1,27 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
 
 // Renders the results for a single search hit
 function SearchResult({ hit }) {
   return (
-    <li className="search-entry">
-      <b>Movie: </b>
-      <i>
-        <Link to={"/movies/" + hit["_id"]} className="App-link">
-          {hit["_source"].title}
-        </Link>
-      </i>
-      <p>
-        <b>Description: </b> {hit["_source"].overview}
-      </p>
-    </li>
+    <Col className="search-entry">
+      <Card>
+        <Card.Body>
+          <b>Movie: </b>
+          <i>
+            <Link to={"/movies/" + hit["_id"]} className="App-link">
+              {hit["_source"].title}
+            </Link>
+          </i>
+          <p>
+            <b>Description: </b> {hit["_source"].overview}
+          </p>
+        </Card.Body>
+      </Card>
+    </Col>
   );
 }
 
