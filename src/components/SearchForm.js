@@ -1,8 +1,7 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
-import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
+import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
 
 // Renders the results for a single search hit
 function SearchResult({ hit }) {
@@ -83,36 +82,61 @@ function SearchForm() {
   // Generate the HTML to return
   return (
     <div className="search-form">
-      <form onSubmit={handleSubmit}>
-        <fieldset>
+      <Form onSubmit={handleSubmit}>
+        {
+          // Basic search bar
+        }
+        <InputGroup>
           {
-            // Basic search bar
+            // TODO: I am hard coding the width of the search bar and select
+            // This is in no way a permanent solution, but I needed a quick fix
+            // for the demo
           }
-          <label>
-            Search:
-            <input
-              name="search_query"
-              onChange={handleChange}
-              value={formData.search_query || ""}
-            />
-          </label>
-          {
-            // Note we are missing a label, I think it looks better without it. How can we include it to
-            // improve accessability without having it show up?
-            // TODO: It would be cool if we could use this for a drop-down menu
-            // https://react-bootstrap.github.io/docs/components/dropdowns/
-            // This is a dropdown menu for selecting what to search by
-          }
-          <select name="search_by" onChange={handleChange}>
-            <option value="title">Title</option>
+          <Form.Select
+            name="search_by"
+            onChange={handleChange}
+            style={{ width: "10%" }}
+          >
+            <option selected value="title">
+              Title
+            </option>
             <option value="credits">Actor</option>
             <option value="credits">Director</option>
             <option value="genres">Genre</option>
             <option value="production_companies">Production Company</option>
-          </select>
-        </fieldset>
-        <button type="submit">Submit</button>
-      </form>
+          </Form.Select>
+          {
+            // Adding this messes up the styling, figure out how to fix this
+            // I think it's important for accessability?
+            //<Form.Label for="search-bar">Search</Form.Label>
+          }
+          <Form.Control
+            name="search_query"
+            placeholder="Search"
+            onChange={handleChange}
+            value={formData.search_query || ""}
+            id="search-bar"
+            style={{ width: "80%" }}
+          />
+          {
+            // Adding this messes up the styling, figure out how to fix this
+            // I think it's important for accessability?
+            //<Form.Label>Search by</Form.Label>
+          }
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </InputGroup>
+
+        {
+          // Note we are missing a label, I think it looks better without it. How can we include it to
+          // improve accessability without having it show up?
+          // TODO: It would be cool if we could use this for a drop-down menu
+          // https://react-bootstrap.github.io/docs/components/dropdowns/
+          // This is a dropdown menu for selecting what to search by
+        }
+      </Form>
+      <br />
       {
         // Renders the results of the search after submitted
         searchResults
