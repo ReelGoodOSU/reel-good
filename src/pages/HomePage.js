@@ -6,11 +6,13 @@ import SearchForm from "../components/SearchForm";
 function HomePage() {
   return (
     <Container fluid className="p-3">
-      <Row className="mb-3">
+      <Row className="mb-3 mt-5">
         <Col className="mt-5">
-          <h1 className="display-4 text-white">Welcome to Reel Good</h1>
+          <h1 className="large-bold-yellow">
+            <strong>Reel Good</strong>
+          </h1>
           <p className="lead text-white">
-            The app that helps you find movies that you might like based on your
+            The app that helps you find movies that you will enjoy based on your
             preferences and ratings.
           </p>
         </Col>
@@ -18,10 +20,10 @@ function HomePage() {
           <div className="float-end">
             <div className="btn-group">
               <Button variant="success" as={Link} to="/login">
-                Log in now
+                Log in
               </Button>
               <Button variant="primary" as={Link} to="/signup">
-                Sign up now
+                Sign up
               </Button>
             </div>
           </div>
