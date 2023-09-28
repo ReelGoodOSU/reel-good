@@ -15,8 +15,11 @@ function formReducer(state, event) {
 }
 
 function TestForm() {
-  // Default formData is empty, this is used for the search bar
-  const [formData, setFormData] = useReducer(formReducer, {});
+  // Default formData shouldn't be empty, this is used to hold all data from form
+  const [formData, setFormData] = useReducer(formReducer, {
+    search_query: "",
+    search_by: "title",
+  });
   // Field is rendered once we search
   const [searchResults, setSearchResults] = useState();
 
@@ -26,25 +29,33 @@ function TestForm() {
     event.preventDefault();
 
     // Make API request to get search results
-    fetch("/search?" + new URLSearchParams({
-      search_query: formData.search,
-      search_by: "title"
-    }))
+    fetch("/search?" + new URLSearchParams(formData))
       .then((response) => response.json())
       .then((data) => {
         // Log data recieved for debug purposes
         console.log(data);
         // Render the search results there were returned
         setSearchResults(
-          (
-            <div className="search">
-              <ul>
-                {data.map((hit) => (
-                  <li><b>Movie:</b> <i>{hit['_source'].title}</i>, <b>Description:</b> {hit['_source'].overview}</li>
-                ))}
-              </ul>
-            </div>
-          )
+          <div className="search-results">
+            <ul className="search-entries">
+              {
+                // For each hit we receive render an entry (title and description) for it
+              }
+              {data.map((hit) => (
+                <li className="search-entry" key={hit["_id"]}>
+                  <b>Movie: </b>
+                  <i>
+                    <Link to={"/movies/" + hit["_id"]} className="App-link">
+                      {hit["_source"].title}
+                    </Link>
+                  </i>
+                  <p>
+                    <b>Description: </b> {hit["_source"].overview}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
         );
       });
   };
@@ -56,23 +67,42 @@ function TestForm() {
     });
   };
 
+
   return (
-    <div className="wrapper">
+    <div className="search-form">
       <h1>Search a Movie</h1>
       <form onSubmit={handleSubmit}>
         <fieldset>
+          {
+            // Basic search bar
+          }
           <label>
             Search:
             <input
-              name="search"
+              name="search_query"
               onChange={handleChange}
-              value={formData.search || ""}
+              value={formData.search_query || ""}
             />
           </label>
+          {
+            // Note we are missing a label, I think it looks better without it. How can we include it to
+            // improve accessability without having it show up?
+            // TODO: It would be cool if we could use this for a drop-down menu
+            // https://react-bootstrap.github.io/docs/components/dropdowns/
+
+            // This is a dropdown menu for selecting what to search by
+          }
+          <select name="search_by" onChange={handleChange}>
+            <option value="title">Title</option>
+            <option value="credits">Actor</option>
+            <option value="credits">Director</option>
+            <option value="genres">Genre</option>
+            <option value="production_companies">Production Company</option>
+          </select>
         </fieldset>
         <button type="submit">Submit</button>
       </form>
-      { searchResults }
+      {searchResults}
     </div>
   );
 }
