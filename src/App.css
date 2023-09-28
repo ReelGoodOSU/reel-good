@@ -1,10 +1,18 @@
 .App {
   text-align: left;
 }
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+body {
+  background: url("../media/istockphoto-997308120-640x640-1.jpg") no-repeat
+    center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 @media (prefers-reduced-motion: no-preference) {
