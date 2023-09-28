@@ -81,49 +81,54 @@ function SamplePage() {
   };
 
   return (
-    <Container fluid className="contact-content debug-border roomfac">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="#">
-          Reel Good
-        </a>
-        <a className="nav-link" href="/">
-          Home&nbsp;
-        </a>
-        <a className="nav-link" href="/sample">
-          Sample Page
-        </a>
-      </nav>
-      <div>
-        {movies.map((movie) => (
-          <Col key={movie.id} md={4} lg={3} className="mb-3">
-            <Card>
-              <Card.Img variant="top" src={movie.poster} />
-              <Card.Body>
-                <Card.Title className="text-center">{movie.title}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted text-center">
-                  {movie.year}
-                </Card.Subtitle>
-                <Card.Text>
-                  Genre: {movie.genre}
-                  <br />
-                  Director: {movie.director}
-                  <br />
-                  Actors: {movie.actors}
-                  <br />
-                  Rating: {movie.rating} / 5
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+    <Container fluid className="contact-content debug-border">
+      <div className="App">
+        <div className="div1">
+          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <a className="navbar-brand" href="/">
+              Reel Good
+            </a>
+            <a className="nav-link" href="/">
+              Home&nbsp;&nbsp;
+            </a>
+            <a className="nav-link" href="/sample">
+              Sample Page
+            </a>
+          </nav>
+        </div>
 
-        <Row className="mb-3">
-          <Col>
-            <Button variant="primary" onClick={handleRecommend}>
-              Recommend
-            </Button>
-          </Col>
-        </Row>
+        <div className="div2">
+          {movies.map((movie) => (
+            <Col key={movie.id} md={4} lg={3} className="mb-3">
+              <Card>
+                <Card.Img variant="top" src={movie.poster} />
+                <Card.Body>
+                  <Card.Title className="text-center">{movie.title}</Card.Title>
+                  <Card.Subtitle className="mb-2 text-muted text-center">
+                    {movie.year}
+                  </Card.Subtitle>
+                  <Card.Text>
+                    Genre: {movie.genre}
+                    <br />
+                    Director: {movie.director}
+                    <br />
+                    Actors: {movie.actors}
+                    <br />
+                    Rating: {movie.rating} / 5
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+
+          <Row className="mb-3">
+            <Col>
+              <Button variant="primary" onClick={handleRecommend}>
+                Recommend
+              </Button>
+            </Col>
+          </Row>
+        </div>
       </div>
     </Container>
   );
