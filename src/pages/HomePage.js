@@ -7,7 +7,7 @@ function HomePage() {
   return (
     <Container fluid className="p-3">
       <Row className="mb-3">
-        <Col>
+        <Col className="mt-5">
           <h1 className="display-4 text-white">Welcome to Reel Good</h1>
           <p className="lead text-white">
             The app that helps you find movies that you might like based on your
