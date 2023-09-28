@@ -58,7 +58,7 @@ function SearchForm() {
                 // For each hit we receive render an entry (title and description) for it
               }
               {data.map((hit) => (
-                <SearchResult hit={hit} key={hit['_id']} />
+                <SearchResult hit={hit} key={hit["_id"]} />
               ))}
             </ul>
           </div>
@@ -108,7 +108,10 @@ function SearchForm() {
         </fieldset>
         <button type="submit">Submit</button>
       </form>
-      {searchResults}
+      {
+        // Renders the results of the search after submitted
+        searchResults
+      }
     </div>
   );
 }
