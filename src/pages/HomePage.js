@@ -7,6 +7,9 @@ function HomePage() {
   return (
     <Container fluid className="p-3">
       <Row className="mb-3 mt-5">
+        {
+          // Header of the website, has title and description of the website
+        }
         <Col className="mt-5">
           <h1 className="large-bold-yellow">
             <strong>Reel Good</strong>
@@ -30,6 +33,9 @@ function HomePage() {
         </Col>
       </Row>
       <Row className="mb-3">
+        {
+          // Setup for the search form
+        }
         <Col>
           <Card bg="dark" text="white">
             <Card.Body>

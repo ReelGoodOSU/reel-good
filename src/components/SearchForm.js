@@ -5,6 +5,7 @@ import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
 
 // Renders the results for a single search hit
 function SearchResult({ hit }) {
+  // TODO: Make the rendering of the movies better include details like actors and genre
   return (
     <Col className="search-entry">
       <Card>
