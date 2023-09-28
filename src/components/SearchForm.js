@@ -77,7 +77,6 @@ function SearchForm() {
   // Generate the HTML to return
   return (
     <div className="search-form">
-      <h1>Search a Movie</h1>
       <form onSubmit={handleSubmit}>
         <fieldset>
           {
