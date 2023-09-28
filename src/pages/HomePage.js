@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import SearchForm from "../components/SearchForm";
 
 function HomePage() {
   return (
@@ -58,18 +59,8 @@ function HomePage() {
         <Col>
           <Card bg="dark" text="white">
             <Card.Body>
-              <Card.Title>Sample page</Card.Title>
-              <Card.Text>
-                If you want to see how the webapp looks like without creating an
-                account or logging in, you can visit our sample page. There you
-                can see some example movies and ratings. You can also click on
-                the recommend button to see some sample recommendations. Note
-                that the sample page is for demonstration purposes only and does
-                not reflect your actual ratings or recommendations.
-              </Card.Text>
-              <Button variant="light" as={Link} to="/sample">
-                Go to sample page
-              </Button>
+              <Card.Title>Search</Card.Title>
+              <SearchForm />
             </Card.Body>
           </Card>
         </Col>
