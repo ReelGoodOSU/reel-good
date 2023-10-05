@@ -1,10 +1,24 @@
 .App {
-  text-align: center;
+  text-align: left;
 }
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.large-bold-yellow {
+  font-size: 96px;
+  font-weight: bold;
+  color: navajowhite;
+}
+
+body {
+  background: url("../media/GettyImages-1140988225.webp") no-repeat center
+    center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 @media (prefers-reduced-motion: no-preference) {
