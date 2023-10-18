@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request
+from flask import Flask, jsonify, request
 from elasticsearch import Elasticsearch
 import time
 
@@ -49,13 +49,84 @@ def search_elastic():
                 topic: {
                     "query": query,
                     "operator": "AND",
+                    "minimum_should_match": "-1",
+                    "fuzziness": "AUTO:5,10",
+                    "fuzzy_transpositions": "false",
                 },
             },
         },
         sort=[{"popularity": {"order": "desc"}}],
         size=size,
     )
+    if len(resp["hits"]["hits"]) == 0:
+        # No hits? Try again with OR matching
+        resp = ES.search(
+            index="movies",
+            query={
+                "match": {
+                    topic: {
+                        "query": query,
+                        "operator": "OR",
+                        "minimum_should_match": "-1",
+                        "fuzziness": "AUTO:5,10",
+                        "fuzzy_transpositions": "false",
+                    },
+                },
+            },
+            sort=[{"popularity": {"order": "desc"}}],
+            size=size,
+        )
     return resp["hits"]["hits"]
+
+
+@app.route("/autocomplete")
+def search_autocomplete_suggestions():
+    global ES
+    query = request.args["search_query"]
+    topic = request.args["search_by"]
+    size = 3
+    resp = ES.search(
+        index="movies",
+        query={
+            "match": {
+                topic: {
+                    "query": query,
+                    "operator": "AND",
+                    "minimum_should_match": "-1",
+                    "fuzziness": "AUTO:5,10",
+                    "fuzzy_transpositions": "false",
+                },
+            },
+        },
+        sort=[{"popularity": {"order": "desc"}}],
+        size=size,
+    )
+    if len(resp["hits"]["hits"]) == 0:
+        # No hits? Try again with OR matching
+        resp = ES.search(
+            index="movies",
+            query={
+                "match": {
+                    topic: {
+                        "query": query,
+                        "operator": "OR",
+                        "minimum_should_match": "-1",
+                        "fuzziness": "AUTO:5,10",
+                        "fuzzy_transpositions": "false",
+                    },
+                },
+            },
+            sort=[{"popularity": {"order": "desc"}}],
+            size=size,
+        )
+    return resp["hits"]["hits"]
+
+
+@app.route("/get_image_url")
+def get_image_url():
+    # Logic to generate or retrieve the image URL
+    image_url = "http://localhost:5000/sdEOH0992YZ0QSxgXNIGLq1ToUi.jpg"
+    return jsonify({"image_url": image_url})
 
 
 """
