@@ -42,6 +42,18 @@ body {
   color: #61dafb;
 }
 
+.Auto-suggestion {
+  color: #282c34;
+}
+
+.clickable-card {
+  cursor: pointer;
+}
+
+.clickable-card:hover {
+  background-color: grey; /* Change background color on hover to indicate interactivity */
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
