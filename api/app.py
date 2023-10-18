@@ -122,13 +122,6 @@ def search_autocomplete_suggestions():
     return resp["hits"]["hits"]
 
 
-@app.route("/get_image_url")
-def get_image_url():
-    # Logic to generate or retrieve the image URL
-    image_url = "http://localhost:5000/sdEOH0992YZ0QSxgXNIGLq1ToUi.jpg"
-    return jsonify({"image_url": image_url})
-
-
 """
 For the backend this is what I need to know to handle a search query and returning the result
 
