@@ -122,22 +122,10 @@ function SearchForm() {
     fetch("/search?" + new URLSearchParams(searchData))
       .then((response) => response.json())
       .then((data) => {
-        // This block of code parses and renders the search results
-        // Log data recieved for debug purposes
-        console.log(data);
-        // Render the search results that were returned
-        setSearchResults(
-          <div className="search-results">
-            <ul className="search-entries">
-              {
-                // For each hit we receive render an entry (title and description) for it
-              }
-              {data.map((hit) => (
-                <SearchResult hit={hit} key={hit["_id"]} />
-              ))}
-            </ul>
-          </div>
-        );
+        const genres = [...new Set(data.map(hit => hit["_source"].genres))];
+        setAvailableGenres(genres);
+        setSearchResults(data);
+        setSelectedGenres([]); // Reset the selected genres after new search
       });
   };
 
