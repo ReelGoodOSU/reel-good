@@ -1,4 +1,10 @@
 FROM node:bullseye
 
+WORKDIR /app
+COPY ./package-lock.json .
+COPY ./package.json .
+
+RUN npm install
+
 # Default port for React
 EXPOSE 3000

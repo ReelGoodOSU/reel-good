@@ -26,9 +26,9 @@ services:
     image: ghcr.io/reelgoodosu/react
     # Note that this container will fail if we don't have the node modules installed!!
     volumes:
-      - type: bind
-        source: ./
-        target: /app
+      - "./media:/app/media"
+      - "./public:/app/public"
+      - "./src:/app/src"
     working_dir: /app
     entrypoint: ["bash", "-c", "sleep 1 && npm start"]
     ports:
