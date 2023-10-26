@@ -43,11 +43,12 @@ function SearchForm() {
     fetch("/search?" + new URLSearchParams(formData))
       .then((response) => response.json())
       .then((data) => {
-        const genres = [...new Set(data.map(hit => hit["_source"].genres))];
+        const genres = [...new Set(data.flatMap(hit => hit["_source"].genres ? hit["_source"].genres.split('-') : []))];
         setAvailableGenres(genres);
         setSearchResults(data);
         setSelectedGenres([]); // Reset the selected genres after new search
-      });
+      });      
+      
   };
 
   const handleChange = (event) => {
@@ -66,8 +67,13 @@ function SearchForm() {
   };
 
   const filteredResults = selectedGenres.length > 0
-    ? searchResults.filter(hit => selectedGenres.includes(hit["_source"].genres))
-    : searchResults;
+  ? searchResults.filter(hit => {
+      const hitGenres = hit["_source"].genres ? hit["_source"].genres.split('-') : [];
+      return selectedGenres.some(genre => hitGenres.includes(genre));
+    })
+  : searchResults;
+
+
 
   return (
     <div className="search-form">
