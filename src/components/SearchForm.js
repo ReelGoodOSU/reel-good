@@ -25,6 +25,24 @@ function SearchResult({ hit }) {
   );
 }
 
+function AutocompleteSuggestion({ hit, onSuggestionClick }) {
+  const handleClick = (event) => {
+    onSuggestionClick(event, hit["_source"].title);
+  };
+
+  return (
+    <Col className="search-entry">
+      <div className="clickable-card" onClick={handleClick}>
+        <Card>
+          <Card.Body>
+            <i>{hit["_source"].title}</i>
+          </Card.Body>
+        </Card>
+      </div>
+    </Col>
+  );
+}
+
 // This function will update the JSON representation of the modifed value
 function formReducer(state, event) {
   // event stores the name and value of the modified field, update it and leave
@@ -43,14 +61,52 @@ function SearchForm() {
   });
   // Field is rendered once we search
   const [searchResults, setSearchResults] = useState();
+  const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
 
   // Function for handling a submit request
   const handleSubmit = (event) => {
     // Don't perform a GET request
     event.preventDefault();
+    performSearch(formData);
+  };
 
+  // Given an event, this function sets up the name and value of the form component to be updated
+  const handleChange = (event) => {
+    setFormData({
+      name: event.target.name,
+      value: event.target.value,
+    });
+
+    // Fetch autocomplete suggestions based on the input value and searchBy
+    fetch(`/autocomplete?` + new URLSearchParams(formData))
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data); // Log the data to check its structure
+        setAutocompleteSuggestions(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching autocomplete suggestions:", error);
+      });
+  };
+
+  const handleSuggestionClick = (event, suggestion) => {
+    // Prevent the default behavior of the event, e.g., preventing page refresh on click
+    event.preventDefault();
+
+    setFormData({
+      name: "search_query",
+      value: suggestion,
+    });
+
+    performSearch({
+      search_by: formData.search_by,
+      search_query: suggestion,
+    });
+  };
+
+  const performSearch = (searchData) => {
     // Make API request to get search results
-    fetch("/search?" + new URLSearchParams(formData))
+    fetch("/search?" + new URLSearchParams(searchData))
       .then((response) => response.json())
       .then((data) => {
         // This block of code parses and renders the search results
@@ -69,15 +125,9 @@ function SearchForm() {
             </ul>
           </div>
         );
+        // Clear autocomplete suggestions when search is triggered
+        setAutocompleteSuggestions([]);
       });
-  };
-
-  // Given an event, this function sets up the name and value of the form component to be updated
-  const handleChange = (event) => {
-    setFormData({
-      name: event.target.name,
-      value: event.target.value,
-    });
   };
 
   // Generate the HTML to return
@@ -97,10 +147,9 @@ function SearchForm() {
             name="search_by"
             onChange={handleChange}
             style={{ width: "10%" }}
+            defaultValue={"title"}
           >
-            <option selected value="title">
-              Title
-            </option>
+            <option value="title">Title</option>
             <option value="credits">Actor</option>
             <option value="credits">Director</option>
             <option value="genres">Genre</option>
@@ -138,6 +187,16 @@ function SearchForm() {
         }
       </Form>
       <br />
+      {/* Autocomplete suggestions */}
+      <ul className="autocomplete-suggestions">
+        {autocompleteSuggestions.map((hit) => (
+          <AutocompleteSuggestion
+            hit={hit}
+            key={hit["_id"]}
+            onSuggestionClick={handleSuggestionClick}
+          />
+        ))}
+      </ul>
       {
         // Renders the results of the search after submitted
         searchResults
