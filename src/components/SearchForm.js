@@ -78,7 +78,8 @@ function SearchForm() {
         setAvailableGenres(genres);
         setSearchResults(data);
         setSelectedGenres([]); // Reset the selected genres after new search
-      });
+      });      
+      
   };
 
   // Given an event, this function sets up the name and value of the form component to be updated
