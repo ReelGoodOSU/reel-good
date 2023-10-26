@@ -1,138 +1,138 @@
-import React, { useReducer, useState } from 'react'
-import { Link } from 'react-router-dom'
-import '../App.css'
-import { Button, Col, Card, Form, InputGroup } from 'react-bootstrap'
+import React, { useReducer, useState } from "react";
+import { Link } from "react-router-dom";
+import "../App.css";
+import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
 
 // Renders the results for a single search hit
-function SearchResult ({ hit }) {
+function SearchResult({ hit }) {
   // TODO: Make the rendering of the movies better include details like actors and genre
   return (
-    <Col className='search-entry'>
+    <Col className="search-entry">
       <Card>
         <Card.Body>
           <b>Movie: </b>
           <i>
-            <Link to={'/movies/' + hit['_id']} className='App-link'>
-              {hit['_source'].title}
+            <Link to={"/movies/" + hit["_id"]} className="App-link">
+              {hit["_source"].title}
             </Link>
           </i>
           <p>
-            <b>Description: </b> {hit['_source'].overview}
+            <b>Description: </b> {hit["_source"].overview}
           </p>
         </Card.Body>
       </Card>
     </Col>
-  )
+  );
 }
 
-function AutocompleteSuggestion ({ hit, onSuggestionClick }) {
-  const handleClick = event => {
-    onSuggestionClick(event, hit['_source'].title)
-  }
+function AutocompleteSuggestion({ hit, onSuggestionClick }) {
+  const handleClick = (event) => {
+    onSuggestionClick(event, hit["_source"].title);
+  };
 
   return (
-    <Col className='search-entry'>
-      <div className='clickable-card' onClick={handleClick}>
+    <Col className="search-entry">
+      <div className="clickable-card" onClick={handleClick}>
         <Card>
           <Card.Body>
-            <i>{hit['_source'].title}</i>
+            <i>{hit["_source"].title}</i>
           </Card.Body>
         </Card>
       </div>
     </Col>
-  )
+  );
 }
 
 // This function will update the JSON representation of the modifed value
-function formReducer (state, event) {
+function formReducer(state, event) {
   // event stores the name and value of the modified field, update it and leave
   // everything else unmodified
   return {
     ...state,
-    [event.name]: event.value
-  }
+    [event.name]: event.value,
+  };
 }
 
-function SearchForm () {
+function SearchForm() {
   // Default formData shouldn't be empty, this is used to hold all data from form
   const [formData, setFormData] = useReducer(formReducer, {
-    search_query: '',
-    search_by: 'title'
-  })
+    search_query: "",
+    search_by: "title",
+  });
   // Field is rendered once we search
-  const [searchResults, setSearchResults] = useState()
-  const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([])
+  const [searchResults, setSearchResults] = useState();
+  const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
 
   // Function for handling a submit request
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     // Don't perform a GET request
-    event.preventDefault()
-    performSearch(formData)
-  }
+    event.preventDefault();
+    performSearch(formData);
+  };
 
   // Given an event, this function sets up the name and value of the form component to be updated
-  const handleChange = event => {
+  const handleChange = (event) => {
     setFormData({
       name: event.target.name,
-      value: event.target.value
-    })
+      value: event.target.value,
+    });
 
     // Fetch autocomplete suggestions based on the input value and searchBy
     fetch(`/autocomplete?` + new URLSearchParams(formData))
-      .then(response => response.json())
-      .then(data => {
-        console.log(data) // Log the data to check its structure
-        setAutocompleteSuggestions(data)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data); // Log the data to check its structure
+        setAutocompleteSuggestions(data);
       })
-      .catch(error => {
-        console.error('Error fetching autocomplete suggestions:', error)
-      })
-  }
+      .catch((error) => {
+        console.error("Error fetching autocomplete suggestions:", error);
+      });
+  };
 
   const handleSuggestionClick = (event, suggestion) => {
     // Prevent the default behavior of the event, e.g., preventing page refresh on click
-    event.preventDefault()
+    event.preventDefault();
 
     setFormData({
-      name: 'search_query',
-      value: suggestion
-    })
+      name: "search_query",
+      value: suggestion,
+    });
 
     performSearch({
       search_by: formData.search_by,
-      search_query: suggestion
-    })
-  }
+      search_query: suggestion,
+    });
+  };
 
-  const performSearch = searchData => {
+  const performSearch = (searchData) => {
     // Make API request to get search results
-    fetch('/search?' + new URLSearchParams(searchData))
-      .then(response => response.json())
-      .then(data => {
+    fetch("/search?" + new URLSearchParams(searchData))
+      .then((response) => response.json())
+      .then((data) => {
         // This block of code parses and renders the search results
         // Log data recieved for debug purposes
-        console.log(data)
+        console.log(data);
         // Render the search results that were returned
         setSearchResults(
-          <div className='search-results'>
-            <ul className='search-entries'>
+          <div className="search-results">
+            <ul className="search-entries">
               {
                 // For each hit we receive render an entry (title and description) for it
               }
-              {data.map(hit => (
-                <SearchResult hit={hit} key={hit['_id']} />
+              {data.map((hit) => (
+                <SearchResult hit={hit} key={hit["_id"]} />
               ))}
             </ul>
           </div>
-        )
+        );
         // Clear autocomplete suggestions when search is triggered
-        setAutocompleteSuggestions([])
-      })
-  }
+        setAutocompleteSuggestions([]);
+      });
+  };
 
   // Generate the HTML to return
   return (
-    <div className='search-form'>
+    <div className="search-form">
       <Form onSubmit={handleSubmit}>
         {
           // Basic search bar
@@ -144,16 +144,16 @@ function SearchForm () {
             // for the demo
           }
           <Form.Select
-            name='search_by'
+            name="search_by"
             onChange={handleChange}
-            style={{ width: '10%' }}
-            defaultValue={'title'}
+            style={{ width: "10%" }}
+            defaultValue={"title"}
           >
-            <option value='title'>Title</option>
-            <option value='credits'>Actor</option>
-            <option value='credits'>Director</option>
-            <option value='genres'>Genre</option>
-            <option value='production_companies'>Production Company</option>
+            <option value="title">Title</option>
+            <option value="credits">Actor</option>
+            <option value="credits">Director</option>
+            <option value="genres">Genre</option>
+            <option value="production_companies">Production Company</option>
           </Form.Select>
           {
             // Adding this messes up the styling, figure out how to fix this
@@ -161,19 +161,19 @@ function SearchForm () {
             //<Form.Label for="search-bar">Search</Form.Label>
           }
           <Form.Control
-            name='search_query'
-            placeholder='Search'
+            name="search_query"
+            placeholder="Search"
             onChange={handleChange}
-            value={formData.search_query || ''}
-            id='search-bar'
-            style={{ width: '80%' }}
+            value={formData.search_query || ""}
+            id="search-bar"
+            style={{ width: "80%" }}
           />
           {
             // Adding this messes up the styling, figure out how to fix this
             // I think it's important for accessability?
             //<Form.Label>Search by</Form.Label>
           }
-          <Button type='submit' variant='primary'>
+          <Button type="submit" variant="primary">
             Submit
           </Button>
         </InputGroup>
@@ -188,11 +188,11 @@ function SearchForm () {
       </Form>
       <br />
       {/* Autocomplete suggestions */}
-      <ul className='autocomplete-suggestions'>
-        {autocompleteSuggestions.map(hit => (
+      <ul className="autocomplete-suggestions">
+        {autocompleteSuggestions.map((hit) => (
           <AutocompleteSuggestion
             hit={hit}
-            key={hit['_id']}
+            key={hit["_id"]}
             onSuggestionClick={handleSuggestionClick}
           />
         ))}
@@ -202,7 +202,7 @@ function SearchForm () {
         searchResults
       }
     </div>
-  )
+  );
 }
 
-export default SearchForm
+export default SearchForm;
