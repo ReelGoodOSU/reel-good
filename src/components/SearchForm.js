@@ -72,15 +72,13 @@ function SearchForm () {
 
   // Given an event, this function sets up the name and value of the form component to be updated
   const handleChange = event => {
-    const inputValue = event.target.value
-    const searchBy = formData.search_by
     setFormData({
       name: event.target.name,
       value: event.target.value
     })
 
     // Fetch autocomplete suggestions based on the input value and searchBy
-    fetch(`/autocomplete?search_query=${inputValue}&search_by=${searchBy}`)
+    fetch(`/autocomplete?` + new URLSearchParams(formData))
       .then(response => response.json())
       .then(data => {
         console.log(data) // Log the data to check its structure
