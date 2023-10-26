@@ -25,14 +25,20 @@ function SearchResult ({ hit }) {
   )
 }
 
-function AutocompleteSuggestion ({ hit }) {
+function AutocompleteSuggestion ({ hit, onSuggestionClick }) {
+  const handleClick = event => {
+    onSuggestionClick(event, hit['_source'].title)
+  }
+
   return (
     <Col className='search-entry'>
-      <Card>
-        <Card.Body>
-          <i>{hit['_source'].title}</i>
-        </Card.Body>
-      </Card>
+      <div className='clickable-card' onClick={handleClick}>
+        <Card>
+          <Card.Body>
+            <i>{hit['_source'].title}</i>
+          </Card.Body>
+        </Card>
+      </div>
     </Col>
   )
 }
@@ -61,30 +67,7 @@ function SearchForm () {
   const handleSubmit = event => {
     // Don't perform a GET request
     event.preventDefault()
-
-    // Make API request to get search results
-    fetch('/search?' + new URLSearchParams(formData))
-      .then(response => response.json())
-      .then(data => {
-        // This block of code parses and renders the search results
-        // Log data recieved for debug purposes
-        console.log(data)
-        // Render the search results that were returned
-        setSearchResults(
-          <div className='search-results'>
-            <ul className='search-entries'>
-              {
-                // For each hit we receive render an entry (title and description) for it
-              }
-              {data.map(hit => (
-                <SearchResult hit={hit} key={hit['_id']} />
-              ))}
-            </ul>
-          </div>
-        )
-        // Clear autocomplete suggestions when search is triggered
-        setAutocompleteSuggestions([])
-      })
+    performSearch(formData)
   }
 
   // Given an event, this function sets up the name and value of the form component to be updated
@@ -111,12 +94,42 @@ function SearchForm () {
   const handleSuggestionClick = (event, suggestion) => {
     // Prevent the default behavior of the event, e.g., preventing page refresh on click
     event.preventDefault()
-    // Set the search query to the selected suggestion and trigger a search
+
     setFormData({
       name: 'search_query',
       value: suggestion
     })
-    handleSubmit(event)
+
+    performSearch({
+      search_by: formData.search_by,
+      search_query: suggestion
+    })
+  }
+
+  const performSearch = searchData => {
+    // Make API request to get search results
+    fetch('/search?' + new URLSearchParams(searchData))
+      .then(response => response.json())
+      .then(data => {
+        // This block of code parses and renders the search results
+        // Log data recieved for debug purposes
+        console.log(data)
+        // Render the search results that were returned
+        setSearchResults(
+          <div className='search-results'>
+            <ul className='search-entries'>
+              {
+                // For each hit we receive render an entry (title and description) for it
+              }
+              {data.map(hit => (
+                <SearchResult hit={hit} key={hit['_id']} />
+              ))}
+            </ul>
+          </div>
+        )
+        // Clear autocomplete suggestions when search is triggered
+        setAutocompleteSuggestions([])
+      })
   }
 
   // Generate the HTML to return
@@ -136,10 +149,9 @@ function SearchForm () {
             name='search_by'
             onChange={handleChange}
             style={{ width: '10%' }}
+            defaultValue={'title'}
           >
-            <option selected value='title'>
-              Title
-            </option>
+            <option value='title'>Title</option>
             <option value='credits'>Actor</option>
             <option value='credits'>Director</option>
             <option value='genres'>Genre</option>
@@ -180,9 +192,11 @@ function SearchForm () {
       {/* Autocomplete suggestions */}
       <ul className='autocomplete-suggestions'>
         {autocompleteSuggestions.map(hit => (
-          <div className='clickable-card' onClick={handleSuggestionClick}>
-            <AutocompleteSuggestion hit={hit} key={hit['_id']} />
-          </div>
+          <AutocompleteSuggestion
+            hit={hit}
+            key={hit['_id']}
+            onSuggestionClick={handleSuggestionClick}
+          />
         ))}
       </ul>
       {
