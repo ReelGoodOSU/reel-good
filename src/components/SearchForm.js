@@ -72,7 +72,8 @@ function SearchForm() {
         setAvailableGenres(genres);
         setSearchResults(data);
         setSelectedGenres([]); // Reset the selected genres after new search
-      });
+      });      
+      
   };
 
   // Given an event, this function sets up the name and value of the form component to be updated
@@ -146,8 +147,13 @@ function SearchForm() {
   };
 
   const filteredResults = selectedGenres.length > 0
-    ? searchResults.filter(hit => selectedGenres.includes(hit["_source"].genres))
-    : searchResults;
+  ? searchResults.filter(hit => {
+      const hitGenres = hit["_source"].genres ? hit["_source"].genres.split('-') : [];
+      return selectedGenres.some(genre => hitGenres.includes(genre));
+    })
+  : searchResults;
+
+
 
   return (
     <div className="search-form">
