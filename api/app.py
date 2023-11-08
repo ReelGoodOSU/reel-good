@@ -43,7 +43,7 @@ def search_elastic():
     # Send query and return the top size hits back (sorted by popularity so we actually
     # get good search results)
     resp = ES.search(
-        index="movies",
+        index="movie",
         query={
             "match": {
                 topic: {
@@ -61,7 +61,7 @@ def search_elastic():
     if len(resp["hits"]["hits"]) == 0:
         # No hits? Try again with OR matching
         resp = ES.search(
-            index="movies",
+            index="movie",
             query={
                 "match": {
                     topic: {
@@ -86,7 +86,7 @@ def search_autocomplete_suggestions():
     topic = request.args["search_by"]
     size = 3
     resp = ES.search(
-        index="movies",
+        index="movie",
         query={
             "match": {
                 topic: {
@@ -104,7 +104,7 @@ def search_autocomplete_suggestions():
     if len(resp["hits"]["hits"]) == 0:
         # No hits? Try again with OR matching
         resp = ES.search(
-            index="movies",
+            index="movie",
             query={
                 "match": {
                     topic: {
