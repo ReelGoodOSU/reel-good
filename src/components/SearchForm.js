@@ -23,9 +23,6 @@ function SearchResult({ hit }) {
           <p>
             <b>Genres: </b> {genreNames.join(', ')}
           </p>
-          <p>
-            <b>Genres: </b> {genreNames.join(', ')}
-          </p>
         </Card.Body>
       </Card>
     </Col>
