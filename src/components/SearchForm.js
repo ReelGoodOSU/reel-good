@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
 import genreIdToName from './genre'; // import the genre mapping
 
-
 function SearchResult({ hit }) {
+  // Convert genre IDs to genre names
+  const genreNames = hit["_source"].genre_ids.map(id => genreIdToName[id] || 'Unknown');
+
   return (
     <Col className="search-entry">
       <Card>
@@ -17,6 +19,9 @@ function SearchResult({ hit }) {
           </i>
           <p>
             <b>Description: </b> {hit["_source"].overview}
+          </p>
+          <p>
+            <b>Genres: </b> {genreNames.join(', ')}
           </p>
         </Card.Body>
       </Card>
@@ -49,6 +54,7 @@ function formReducer(state, event) {
   };
 }
 
+
 function SearchForm() {
   const [formData, setFormData] = useReducer(formReducer, {
     search_query: "",
@@ -72,8 +78,7 @@ function SearchForm() {
         setAvailableGenres(genres);
         setSearchResults(data);
         setSelectedGenres([]); // Reset the selected genres after new search
-      });      
-      
+      });
   };
 
   // Given an event, this function sets up the name and value of the form component to be updated
@@ -139,19 +144,20 @@ function SearchForm() {
 
 
   const handleGenreChange = (event) => {
+    const genreName = event.target.value;
     if (event.target.checked) {
-      setSelectedGenres(prevGenres => [...prevGenres, event.target.value]);
+      setSelectedGenres(prevGenres => [...prevGenres, genreName]);
     } else {
-      setSelectedGenres(prevGenres => prevGenres.filter(genre => genre !== event.target.value));
+      setSelectedGenres(prevGenres => prevGenres.filter(genre => genre !== genreName));
     }
   };
 
   const filteredResults = selectedGenres.length > 0
-  ? searchResults.filter(hit => {
-      const hitGenres = hit["_source"].genres ? hit["_source"].genres.split('-') : [];
-      return selectedGenres.some(genre => hitGenres.includes(genre));
-    })
-  : searchResults;
+    ? searchResults.filter(hit => {
+        const hitGenreIds = hit["_source"].genre_ids || [];
+        return selectedGenres.some(genreName => hitGenreIds.includes(parseInt(Object.keys(genreIdToName).find(key => genreIdToName[key] === genreName))));
+      })
+    : searchResults;
 
 
 
@@ -196,12 +202,12 @@ function SearchForm() {
         ))}
       </ul>
       <div className="genre-filter">
-        {availableGenres.map(genre => (
+        {availableGenres.map(genreName => (
           <Form.Check
             type="checkbox"
-            label={genre}
-            key={genre}
-            value={genre}
+            label={genreName}
+            key={genreName}
+            value={genreName}
             onChange={handleGenreChange}
           />
         ))}
