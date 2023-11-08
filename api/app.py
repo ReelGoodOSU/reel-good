@@ -43,7 +43,7 @@ def search_elastic():
     # Send query and return the top size hits back (sorted by popularity so we actually
     # get good search results)
     resp = ES.search(
-        index="movies",
+        index="movie",
         query={
             "match": {
                 topic: {
