@@ -29,24 +29,6 @@ function SearchResult({ hit }) {
   );
 }
 
-function AutocompleteSuggestion({ hit, onSuggestionClick }) {
-  const handleClick = (event) => {
-    onSuggestionClick(event, hit["_source"].title);
-  };
-
-  return (
-    <Col className="search-entry">
-      <div className="clickable-card" onClick={handleClick}>
-        <Card>
-          <Card.Body>
-            <i>{hit["_source"].title}</i>
-          </Card.Body>
-        </Card>
-      </div>
-    </Col>
-  );
-}
-
 function formReducer(state, event) {
   return {
     ...state,
@@ -67,7 +49,6 @@ function SearchForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // performSearch(formData);
     fetch("/search?" + new URLSearchParams(formData)) //calls app.py
       .then((response) => response.json())
       .then((data) => {
@@ -81,67 +62,12 @@ function SearchForm() {
       });
   };
 
-  // Given an event, this function sets up the name and value of the form component to be updated
   const handleChange = (event) => {
     setFormData({
       name: event.target.name,
       value: event.target.value,
     });
-
-    // Fetch autocomplete suggestions based on the input value and searchBy
-    fetch(`/autocomplete?` + new URLSearchParams(formData))
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data); // Log the data to check its structure
-        setAutocompleteSuggestions(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching autocomplete suggestions:", error);
-      });
   };
-
-  const handleSuggestionClick = (event, suggestion) => {
-    // Prevent the default behavior of the event, e.g., preventing page refresh on click
-    event.preventDefault();
-
-    setFormData({
-      name: "search_query",
-      value: suggestion,
-    });
-    
-    // TODO: MERGE CONFLICT
-
-    // performSearch({
-    //   search_by: formData.search_by,
-    //   search_query: suggestion,
-    // });
-  };
-
-  const performSearch = (searchData) => {
-    // Make API request to get search results
-    fetch("/search?" + new URLSearchParams(searchData))
-      .then((response) => response.json())
-      .then((data) => {
-        // This block of code parses and renders the search results
-        // Log data recieved for debug purposes
-        console.log(data);
-        // Render the search results that were returned
-        setSearchResults(
-          <div className="search-results">
-            <ul className="search-entries">
-              {
-                // For each hit we receive render an entry (title and description) for it
-              }
-              {data.map((hit) => (
-                <SearchResult hit={hit} key={hit["_id"]} />
-              ))}
-            </ul>
-          </div>
-        );
-      });
-  };
-
-
 
   const handleGenreChange = (event) => {
     const genreName = event.target.value;
@@ -191,16 +117,6 @@ function SearchForm() {
         </InputGroup>
       </Form>
       <br />
-      {/* Autocomplete suggestions */}
-      <ul className="autocomplete-suggestions">
-        {autocompleteSuggestions.map((hit) => (
-          <AutocompleteSuggestion
-            hit={hit}
-            key={hit["_id"]}
-            onSuggestionClick={handleSuggestionClick}
-          />
-        ))}
-      </ul>
       <div className="genre-filter">
         {availableGenres.map(genreName => (
           <Form.Check
