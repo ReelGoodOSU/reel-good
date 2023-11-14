@@ -1,11 +1,10 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import "../App.css";
 import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
+import genreIdToName from './genre'; // import the genre mapping
 
-// Renders the results for a single search hit
+
 function SearchResult({ hit }) {
-  // TODO: Make the rendering of the movies better include details like actors and genre
   return (
     <Col className="search-entry">
       <Card>
@@ -43,10 +42,7 @@ function AutocompleteSuggestion({ hit, onSuggestionClick }) {
   );
 }
 
-// This function will update the JSON representation of the modifed value
 function formReducer(state, event) {
-  // event stores the name and value of the modified field, update it and leave
-  // everything else unmodified
   return {
     ...state,
     [event.name]: event.value,
@@ -54,20 +50,29 @@ function formReducer(state, event) {
 }
 
 function SearchForm() {
-  // Default formData shouldn't be empty, this is used to hold all data from form
   const [formData, setFormData] = useReducer(formReducer, {
     search_query: "",
     search_by: "title",
   });
-  // Field is rendered once we search
-  const [searchResults, setSearchResults] = useState();
+  const [searchResults, setSearchResults] = useState([]);
+  const [availableGenres, setAvailableGenres] = useState([]);
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
 
-  // Function for handling a submit request
   const handleSubmit = (event) => {
-    // Don't perform a GET request
     event.preventDefault();
-    performSearch(formData);
+    // performSearch(formData);
+    fetch("/search?" + new URLSearchParams(formData)) //calls app.py
+      .then((response) => response.json())
+      .then((data) => {
+        // This will extract all genre_ids from the hits, find the unique ids, 
+        // map them to their genre names, and finally set the state with these names
+        const uniqueGenreIds = Array.from(new Set(data.flatMap(hit => hit["_source"].genre_ids || [])));
+        const genres = uniqueGenreIds.map(id => genreIdToName[id]).filter(name => name); // Ensure that we only add valid names
+        setAvailableGenres(genres);
+        setSearchResults(data);
+        setSelectedGenres([]); // Reset the selected genres after new search
+      });
   };
 
   // Given an event, this function sets up the name and value of the form component to be updated
@@ -97,11 +102,13 @@ function SearchForm() {
       name: "search_query",
       value: suggestion,
     });
+    
+    // TODO: MERGE CONFLICT
 
-    performSearch({
-      search_by: formData.search_by,
-      search_query: suggestion,
-    });
+    // performSearch({
+    //   search_by: formData.search_by,
+    //   search_query: suggestion,
+    // });
   };
 
   const performSearch = (searchData) => {
@@ -125,24 +132,27 @@ function SearchForm() {
             </ul>
           </div>
         );
-        // Clear autocomplete suggestions when search is triggered
-        setAutocompleteSuggestions([]);
       });
   };
 
-  // Generate the HTML to return
+
+
+  const handleGenreChange = (event) => {
+    if (event.target.checked) {
+      setSelectedGenres(prevGenres => [...prevGenres, event.target.value]);
+    } else {
+      setSelectedGenres(prevGenres => prevGenres.filter(genre => genre !== event.target.value));
+    }
+  };
+
+  const filteredResults = selectedGenres.length > 0
+    ? searchResults.filter(hit => selectedGenres.includes(hit["_source"].genres))
+    : searchResults;
+
   return (
     <div className="search-form">
       <Form onSubmit={handleSubmit}>
-        {
-          // Basic search bar
-        }
         <InputGroup>
-          {
-            // TODO: I am hard coding the width of the search bar and select
-            // This is in no way a permanent solution, but I needed a quick fix
-            // for the demo
-          }
           <Form.Select
             name="search_by"
             onChange={handleChange}
@@ -155,11 +165,6 @@ function SearchForm() {
             <option value="genres">Genre</option>
             <option value="production_companies">Production Company</option>
           </Form.Select>
-          {
-            // Adding this messes up the styling, figure out how to fix this
-            // I think it's important for accessability?
-            //<Form.Label for="search-bar">Search</Form.Label>
-          }
           <Form.Control
             name="search_query"
             placeholder="Search"
@@ -168,23 +173,10 @@ function SearchForm() {
             id="search-bar"
             style={{ width: "80%" }}
           />
-          {
-            // Adding this messes up the styling, figure out how to fix this
-            // I think it's important for accessability?
-            //<Form.Label>Search by</Form.Label>
-          }
           <Button type="submit" variant="primary">
             Submit
           </Button>
         </InputGroup>
-
-        {
-          // Note we are missing a label, I think it looks better without it. How can we include it to
-          // improve accessability without having it show up?
-          // TODO: It would be cool if we could use this for a drop-down menu
-          // https://react-bootstrap.github.io/docs/components/dropdowns/
-          // This is a dropdown menu for selecting what to search by
-        }
       </Form>
       <br />
       {/* Autocomplete suggestions */}
@@ -197,10 +189,25 @@ function SearchForm() {
           />
         ))}
       </ul>
-      {
-        // Renders the results of the search after submitted
-        searchResults
-      }
+      <div className="genre-filter">
+        {availableGenres.map(genre => (
+          <Form.Check
+            type="checkbox"
+            label={genre}
+            key={genre}
+            value={genre}
+            onChange={handleGenreChange}
+          />
+        ))}
+      </div>
+      <br />
+      <div className="search-results">
+        <ul className="search-entries">
+          {filteredResults.map((hit) => (
+            <SearchResult hit={hit} key={hit["_id"]} />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
