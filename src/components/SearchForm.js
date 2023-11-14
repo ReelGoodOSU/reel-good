@@ -23,6 +23,9 @@ function SearchResult({ hit }) {
           <p>
             <b>Genres: </b> {genreNames.join(', ')}
           </p>
+          <p>
+            <b>Genres: </b> {genreNames.join(', ')}
+          </p>
         </Card.Body>
       </Card>
     </Col>
@@ -55,6 +58,7 @@ function formReducer(state, event) {
 }
 
 
+
 function SearchForm() {
   const [formData, setFormData] = useReducer(formReducer, {
     search_query: "",
@@ -78,8 +82,7 @@ function SearchForm() {
         setAvailableGenres(genres);
         setSearchResults(data);
         setSelectedGenres([]); // Reset the selected genres after new search
-      });      
-      
+      });
   };
 
   // Given an event, this function sets up the name and value of the form component to be updated
