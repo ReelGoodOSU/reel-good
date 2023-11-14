@@ -22,6 +22,36 @@ def get_current_time():
 
 
 @app.route("/movies/<movie_id>")
+def get_movieData(movie_id):
+    global ES
+    try:
+        # send get query for movie ID
+        resp = ES.get(index="movie", id=movie_id)
+        print(f"back booty: {resp}")
+        return resp["_source"], 200
+    except Exception as e:
+        # log the exception
+        print(f"Error fetching movie data: {e}")
+        return {"error": "Error fetching movie data"}, 500
+
+
+@app.route("/actors/<actor_id>")
+def get_actorData(actor_id):
+    global ES
+    try:
+        # Send get query for actor ID
+        resp = ES.get(
+            index="person", id=actor_id
+        )  # Make sure "person" is the correct index for your actors
+        print(f"Actor data: {resp}")
+        return resp["_source"], 200
+    except Exception as e:
+        # Log the exception
+        print(f"Error fetching actor data: {e}")
+        return {"error": "Error fetching actor data"}, 500
+
+
+@app.route("/movies/<movie_id>")
 def get_movie_data(movie_id):
     global ES
     try:
