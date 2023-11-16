@@ -27,6 +27,11 @@ def get_elastic_info():
     global ES
     return ES.info(pretty=True).body
 
+@app.route("/person/<id>")
+def get_person(id):
+    global ES
+    resp = ES.get(index="person", id=id)
+    return resp["_source"]
 
 @app.route("/search")
 def search_elastic():
