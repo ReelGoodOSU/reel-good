@@ -1,11 +1,15 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
-import genreIdToName from './genre'; // import the genre mapping
+import "../App.css";
+import genreIdToName from "./genre"; // import the genre mapping
 
+// Renders the results for a single search hit
 function SearchResult({ hit }) {
   // Convert genre IDs to genre names
-  const genreNames = hit["_source"].genre_ids.map(id => genreIdToName[id] || 'Unknown');
+  const genreNames = hit["_source"].genre_ids.map(
+    (id) => genreIdToName[id] || "Unknown"
+  );
 
   return (
     <Col className="search-entry">
@@ -21,7 +25,7 @@ function SearchResult({ hit }) {
             <b>Description: </b> {hit["_source"].overview}
           </p>
           <p>
-            <b>Genres: </b> {genreNames.join(', ')}
+            <b>Genres: </b> {genreNames.join(", ")}
           </p>
         </Card.Body>
       </Card>
@@ -47,14 +51,15 @@ function AutocompleteSuggestion({ hit, onSuggestionClick }) {
   );
 }
 
+// This function will update the JSON representation of the modifed value
 function formReducer(state, event) {
+  // event stores the name and value of the modified field, update it and leave
+  // everything else unmodified
   return {
     ...state,
     [event.name]: event.value,
   };
 }
-
-
 
 function SearchForm() {
   const [formData, setFormData] = useReducer(formReducer, {
@@ -66,20 +71,11 @@ function SearchForm() {
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
 
+  // Function for handling a submit request
   const handleSubmit = (event) => {
+    // Don't perform a GET request
     event.preventDefault();
-    // performSearch(formData);
-    fetch("/search?" + new URLSearchParams(formData)) //calls app.py
-      .then((response) => response.json())
-      .then((data) => {
-        // This will extract all genre_ids from the hits, find the unique ids, 
-        // map them to their genre names, and finally set the state with these names
-        const uniqueGenreIds = Array.from(new Set(data.flatMap(hit => hit["_source"].genre_ids || [])));
-        const genres = uniqueGenreIds.map(id => genreIdToName[id]).filter(name => name); // Ensure that we only add valid names
-        setAvailableGenres(genres);
-        setSearchResults(data);
-        setSelectedGenres([]); // Reset the selected genres after new search
-      });
+    performSearch(formData);
   };
 
   // Given an event, this function sets up the name and value of the form component to be updated
@@ -109,13 +105,11 @@ function SearchForm() {
       name: "search_query",
       value: suggestion,
     });
-    
-    // TODO: MERGE CONFLICT
 
-    // performSearch({
-    //   search_by: formData.search_by,
-    //   search_query: suggestion,
-    // });
+    performSearch({
+      search_by: formData.search_by,
+      search_query: suggestion,
+    });
   };
 
   const performSearch = (searchData) => {
@@ -123,37 +117,65 @@ function SearchForm() {
     fetch("/search?" + new URLSearchParams(searchData))
       .then((response) => response.json())
       .then((data) => {
-        const genres = [...new Set(data.map(hit => hit["_source"].genres))];
+        // This block of code parses and renders the search results
+
+        // This will extract all genre_ids from the hits, find the unique ids,
+        // map them to their genre names, and finally set the state with these names
+        const uniqueGenreIds = Array.from(
+          new Set(data.flatMap((hit) => hit["_source"].genre_ids || []))
+        );
+        // Ensure that we only add valid names
+        const genres = uniqueGenreIds
+          .map((id) => genreIdToName[id])
+          .filter((name) => name);
         setAvailableGenres(genres);
         setSearchResults(data);
-        setSelectedGenres([]); // Reset the selected genres after new search
+        // Reset the selected genres after new search
+        setSelectedGenres([]);
+        // Clear autocomplete suggestions when search is triggered
+        setAutocompleteSuggestions([]);
       });
   };
-
-
 
   const handleGenreChange = (event) => {
     const genreName = event.target.value;
     if (event.target.checked) {
-      setSelectedGenres(prevGenres => [...prevGenres, genreName]);
+      setSelectedGenres((prevGenres) => [...prevGenres, genreName]);
     } else {
-      setSelectedGenres(prevGenres => prevGenres.filter(genre => genre !== genreName));
+      setSelectedGenres((prevGenres) =>
+        prevGenres.filter((genre) => genre !== genreName)
+      );
     }
   };
 
-  const filteredResults = selectedGenres.length > 0
-    ? searchResults.filter(hit => {
-        const hitGenreIds = hit["_source"].genre_ids || [];
-        return selectedGenres.some(genreName => hitGenreIds.includes(parseInt(Object.keys(genreIdToName).find(key => genreIdToName[key] === genreName))));
-      })
-    : searchResults;
-
-
+  const filteredResults =
+    selectedGenres.length > 0
+      ? searchResults.filter((hit) => {
+          const hitGenreIds = hit["_source"].genre_ids || [];
+          return selectedGenres.some((genreName) =>
+            hitGenreIds.includes(
+              parseInt(
+                Object.keys(genreIdToName).find(
+                  (key) => genreIdToName[key] === genreName
+                )
+              )
+            )
+          );
+        })
+      : searchResults;
 
   return (
     <div className="search-form">
       <Form onSubmit={handleSubmit}>
+        {
+          // Basic search bar
+        }
         <InputGroup>
+          {
+            // TODO: I am hard coding the width of the search bar and select
+            // This is in no way a permanent solution, but I needed a quick fix
+            // for the demo
+          }
           <Form.Select
             name="search_by"
             onChange={handleChange}
@@ -190,8 +212,8 @@ function SearchForm() {
           />
         ))}
       </ul>
-      <div className="genre-filter">
-        {availableGenres.map(genreName => (
+      <ul className="genre-filter">
+        {availableGenres.map((genreName) => (
           <Form.Check
             type="checkbox"
             label={genreName}
@@ -200,13 +222,16 @@ function SearchForm() {
             onChange={handleGenreChange}
           />
         ))}
-      </div>
+      </ul>
       <br />
       <div className="search-results">
         <ul className="search-entries">
-          {filteredResults.map((hit) => (
-            <SearchResult hit={hit} key={hit["_id"]} />
-          ))}
+          {
+            // Renders the results of the search after submitted
+            filteredResults.map((hit) => (
+              <SearchResult hit={hit} key={hit["_id"]} />
+            ))
+          }
         </ul>
       </div>
     </div>
