@@ -6,6 +6,7 @@ import time
 
 # For testing purposes, we will want to change how this is stored in actual backend
 ELASTIC_PASSWORD = "cse5914_capstone"
+GENRE_ID_CACHE = dict()
 
 ES = Elasticsearch(
     "https://es01:9200",
@@ -31,6 +32,7 @@ def get_elastic_info():
 @app.route("/search")
 def search_elastic():
     global ES
+    global GENRE_ID_CACHE
     # TODO HOW SHOULD I FORMAT AND RETURN THE DATA
     # Grab the search query and the field to search by (title, credits, runtime, etc)
     query = request.args.get("search_query")
@@ -76,7 +78,19 @@ def search_elastic():
             sort=[{"popularity": {"order": "desc"}}],
             size=size,
         )
-    return resp["hits"]["hits"]
+    hits = resp["hits"]["hits"]
+
+    for hit in hits:
+        hit["_source"]["genres"] = hit["_source"].pop("genre_ids")
+        for idx in range(len(hit["_source"]["genres"])):
+            id = hit["_source"]["genres"][idx]
+            genre_name = GENRE_ID_CACHE.get(id)
+            if not genre_name:
+                genre_name = ES.get(index="genres", id=id)
+                genre_name = genre_name["_source"]["name"]
+                GENRE_ID_CACHE[id] = genre_name
+            hit["_source"]["genres"][idx] = genre_name
+    return hits
 
 
 @app.route("/autocomplete")
