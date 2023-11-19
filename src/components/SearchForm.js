@@ -251,7 +251,7 @@ function SearchForm() {
             {
               // Renders the results of the search after submitted
               filteredResults.map((hit) => (
-                <Col xs={12} sm={6}>
+                <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
                   <SearchResult hit={hit} key={hit["_id"]} />
                 </Col>
               ))
