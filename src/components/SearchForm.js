@@ -1,6 +1,6 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
+import { Button, Col, Row, Card, Form, InputGroup } from "react-bootstrap";
 import "../App.css";
 import genreIdToName from "./genre"; // import the genre mapping
 
@@ -12,22 +12,42 @@ function SearchResult({ hit }) {
   );
 
   return (
-    <Col className="search-entry">
-      <Card>
-        <Card.Body>
-          <b>Movie: </b>
-          <i>
-            <Link to={"/movies/" + hit["_id"]} className="App-link">
-              {hit["_source"].title}
-            </Link>
-          </i>
-          <p>
+    <Col className="search-entry d-flex justify-content-center" xxl={8}>
+      <Card className="bg-dark text-white">
+        <Card.Img
+          variant="bottom"
+          src={
+            "https://image.tmdb.org/t/p/original/" +
+            hit["_source"].backdrop_path
+          }
+          alt="Movie Poster"
+          className="movie-poster"
+          class="card-img-top"
+        />
+        <Card.ImgOverlay>
+          <Card
+            style={{
+              display: "inline-block",
+              opacity: ".7",
+              padding: "5px",
+            }}
+            className="bg-dark cardClass"
+          >
+            <b style={{ color: "white" }}>Movie: </b>
+            <h4>
+              <Link
+                to={"/movies/" + hit["_id"]}
+                className="App-link"
+                style={{ color: "white" }}
+              >
+                {hit["_source"].title}
+              </Link>
+            </h4>
+            {/* <p>
             <b>Description: </b> {hit["_source"].overview}
-          </p>
-          <p>
-            <b>Genres: </b> {genreNames.join(", ")}
-          </p>
-        </Card.Body>
+          </p> */}
+          </Card>
+        </Card.ImgOverlay>
       </Card>
     </Col>
   );
@@ -212,28 +232,33 @@ function SearchForm() {
           />
         ))}
       </ul>
-      <ul className="genre-filter">
-        {availableGenres.map((genreName) => (
-          <Form.Check
-            type="checkbox"
-            label={genreName}
-            key={genreName}
-            value={genreName}
-            onChange={handleGenreChange}
-          />
-        ))}
-      </ul>
-      <br />
-      <div className="search-results">
-        <ul className="search-entries">
-          {
-            // Renders the results of the search after submitted
-            filteredResults.map((hit) => (
-              <SearchResult hit={hit} key={hit["_id"]} />
-            ))
-          }
-        </ul>
-      </div>
+      <Row>
+        <Col xs={4} md={3} lg={2}>
+          <ul className="genre-filter">
+            {availableGenres.map((genreName) => (
+              <Form.Check
+                type="checkbox"
+                label={genreName}
+                key={genreName}
+                value={genreName}
+                onChange={handleGenreChange}
+              />
+            ))}
+          </ul>
+        </Col>
+        <Col xs={8} md={9} lg={10}>
+          <Row>
+            {
+              // Renders the results of the search after submitted
+              filteredResults.map((hit) => (
+                <Col xs={12} sm={6}>
+                  <SearchResult hit={hit} key={hit["_id"]} />
+                </Col>
+              ))
+            }
+          </Row>
+        </Col>
+      </Row>
     </div>
   );
 }
