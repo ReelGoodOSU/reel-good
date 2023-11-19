@@ -1,12 +1,39 @@
 import React from "react";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Navbar,
+  Nav,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import SearchForm from "../components/SearchForm";
 
 function HomePage() {
   return (
     <Container fluid className="p-3">
-      <Row className="mb-3 mt-5">
+      <Row className="mb-1 mt-2">
+        <Navbar bg="dark" data-bs-theme="dark">
+          <Container>
+            <Navbar.Brand href="#home">Home</Navbar.Brand>
+            <Nav className="me-auto">
+              <Nav.Link href="#home">About Us</Nav.Link>
+              <Nav.Link href="#features">Recommendations</Nav.Link>
+              <Nav.Link href="#pricing">Browse</Nav.Link>
+            </Nav>
+            <div className="btn-group">
+              <Button variant="success" as={Link} to="/login">
+                Log in
+              </Button>
+              <Button variant="primary" as={Link} to="/signup">
+                Sign up
+              </Button>
+            </div>
+          </Container>
+        </Navbar>
+
         {
           // Header of the website, has title and description of the website
         }
@@ -19,18 +46,7 @@ function HomePage() {
             preferences and ratings.
           </p>
         </Col>
-        <Col>
-          <div className="float-end">
-            <div className="btn-group">
-              <Button variant="success" as={Link} to="/login">
-                Log in
-              </Button>
-              <Button variant="primary" as={Link} to="/signup">
-                Sign up
-              </Button>
-            </div>
-          </div>
-        </Col>
+        <Col></Col>
       </Row>
       <Row className="mb-3">
         {
