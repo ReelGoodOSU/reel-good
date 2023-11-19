@@ -21,6 +21,7 @@ function HomePage() {
             <Nav className="me-auto">
               <Nav.Link href="#">Recommendations</Nav.Link>
               <Nav.Link href="/">Browse</Nav.Link>
+
             </Nav>
             <div className="btn-group">
               <Button variant="success" as={Link} to="/login">

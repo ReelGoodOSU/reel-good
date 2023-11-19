@@ -4,7 +4,14 @@ import "../App.css";
 import { Button, Row, Col, Card, Form, InputGroup } from "react-bootstrap";
 
 // Renders the results for a single search hit
-function SearchResult({ hit }) {
+function SearchResult({ hit, onMovieSelect }) {
+  const [isChecked, setIsChecked] = useState(false);
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+    if (event.target.checked) {
+      onMovieSelect(event, hit);
+    }
+  };
   // TODO: Make the rendering of the movies better include details like actors and genre
   return (
     <Col className="search-entry">
@@ -24,6 +31,8 @@ function SearchResult({ hit }) {
                 type="switch"
                 id="custom-switch"
                 label="I Liked This Movie"
+                checked={isChecked}
+                onChange={handleCheckboxChange}
               />
             </Col>
           </Row>
@@ -70,6 +79,18 @@ function RecommendationForm() {
   // Field is rendered once we search
   const [searchResults, setSearchResults] = useState();
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
+  const [selectedMovies, setSelectedMovies] = useState([]);
+
+  const onMovieSelect = (event, hit) => {
+    console.log(`Selected movie: ${hit["_source"].title}`);
+    if (event.target.checked) {
+      setSelectedMovies((prevMovies) => [...prevMovies, hit]);
+    } else {
+      setSelectedMovies((prevMovies) =>
+        prevMovies.filter((movie) => movie["_id"] !== hit["_id"])
+      );
+    }
+  };
 
   // Function for handling a submit request
   const handleSubmit = (event) => {
@@ -128,7 +149,11 @@ function RecommendationForm() {
                 // For each hit we receive render an entry (title and description) for it
               }
               {data.map((hit) => (
-                <SearchResult hit={hit} key={hit["_id"]} />
+                <SearchResult
+                  hit={hit}
+                  key={hit["_id"]}
+                  onMovieSelect={onMovieSelect}
+                />
               ))}
             </ul>
           </div>
@@ -141,6 +166,12 @@ function RecommendationForm() {
   // Generate the HTML to return
   return (
     <div className="search-form">
+      <h2>Selected Movies</h2>
+      <ul>
+        {selectedMovies.map((movie) => (
+          <li key={movie["_id"]}>{movie["_source"].title}</li>
+        ))}
+      </ul>
       <Form onSubmit={handleSubmit}>
         {
           // Basic search bar
