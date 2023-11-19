@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import Image from "react-bootstrap/Image";
 import { Link, useParams } from "react-router-dom";
 
 function PersonDetails() {
   // Take the id from the path of the URL and place in id variable
   const { id } = useParams();
-  const [PersonDetails, setPersonDetails] = useState();
+  const [personDetails, setPersonDetails] = useState();
 
   useEffect(() => {
     fetch("/person/" + id)
@@ -13,16 +14,43 @@ function PersonDetails() {
       .then((data) => {
         console.log(data); // Log the data to check its structure
 
-        //TODO: Figure out how we want to present the data
         setPersonDetails(
-          <p className="text-white">
-            <p>{data.name}</p>
-            <Card.Img
-              variant="top"
-              src={`https://image.tmdb.org/t/p/original/${data.profile_path}`}
-              alt={data.name}
-            />
-          </p>
+          <Row className="mb-3 text-white">
+            <Col>
+                <Image
+                  src={`https://image.tmdb.org/t/p/original/${data.profile_path}`}
+                  alt={ data.name }
+                  width="250px"
+                  rounded
+                />
+            </Col>
+            <Col>
+              <h2>{ data.name }</h2>
+              <p> { data.biography } </p>
+            </Col>
+            <Col>
+             <Container>
+              <Row>
+                  <Col>
+                    Place of Birth: { data.place_of_birth }
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    Birthday: { data.birthday }
+                  </Col>
+                </Row>
+                {
+                  data.deathday != null &&
+                  <Row>
+                    <Col>
+                      Death: { data.deathday }
+                    </Col>
+                  </Row>
+                }
+             </Container>
+            </Col>
+          </Row>
         );
       })
       .catch((error) => {
@@ -32,35 +60,10 @@ function PersonDetails() {
 
   return (
     <Container fluid className="p-3">
-      <Row className="mb-3 mt-5">
-        {
-          // Header of the website, has title and description of the website
-        }
-        <Col className="mt-5">
-          <h1 className="large-bold-yellow">
-            <strong>Reel Good</strong>
-          </h1>
-          <p className="lead text-white">This is some content</p>
-        </Col>
-        <Col>
-          <div className="float-end">
-            <div className="btn-group">
-              <Button variant="success" as={Link} to="/login">
-                Log in
-              </Button>
-              <Button variant="primary" as={Link} to="/signup">
-                Sign up
-              </Button>
-            </div>
-          </div>
-        </Col>
-      </Row>
-      <Row className="mb-3">
-        {
-          // Setup for the search form
-        }
-        <Col>{PersonDetails}</Col>
-      </Row>
+      {
+        // Page is rendered by feting data from backend
+      }
+      {personDetails}
     </Container>
   );
 }
