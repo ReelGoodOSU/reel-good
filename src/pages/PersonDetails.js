@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Table } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { Link, useParams } from "react-router-dom";
+import MovieCard from "../components/MovieCard";
 
 function PersonDetails() {
   // Take the id from the path of the URL and place in id variable
@@ -15,42 +16,46 @@ function PersonDetails() {
         console.log(data); // Log the data to check its structure
 
         setPersonDetails(
-          <Row className="mb-3 text-white">
-            <Col>
+          <Container className="p-3 text-white">
+            <Row className="mb-3">
+              <Col>
                 <Image
                   src={`https://image.tmdb.org/t/p/original/${data.profile_path}`}
-                  alt={ data.name }
+                  alt={data.name}
                   width="250px"
                   rounded
                 />
-            </Col>
-            <Col>
-              <h2>{ data.name }</h2>
-              <p> { data.biography } </p>
-            </Col>
-            <Col>
-             <Container>
-              <Row>
-                  <Col>
-                    Place of Birth: { data.place_of_birth }
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    Birthday: { data.birthday }
-                  </Col>
-                </Row>
-                {
-                  data.deathday != null &&
+              </Col>
+              <Col>
+                <h2>{data.name}</h2>
+                <p> {data.biography} </p>
+              </Col>
+              <Col>
+                <Container>
                   <Row>
-                    <Col>
-                      Death: { data.deathday }
-                    </Col>
+                    <Col>Place of Birth: {data.place_of_birth}</Col>
                   </Row>
-                }
-             </Container>
-            </Col>
-          </Row>
+                  <Row>
+                    <Col>Birthday: {data.birthday}</Col>
+                  </Row>
+                  {data.deathday != null && (
+                    <Row>
+                      <Col>Death: {data.deathday}</Col>
+                    </Row>
+                  )}
+                </Container>
+              </Col>
+            </Row>
+            <Row className="flex-nowrap overflow-auto" sm={4}>
+              {data.credits.map((movieId) => {
+                return (
+                  <Col>
+                    <MovieCard id={movieId} />
+                  </Col>
+                );
+              })}
+            </Row>
+          </Container>
         );
       })
       .catch((error) => {
@@ -59,12 +64,12 @@ function PersonDetails() {
   }, []);
 
   return (
-    <Container fluid className="p-3">
+    <div>
       {
         // Page is rendered by feting data from backend
       }
       {personDetails}
-    </Container>
+    </div>
   );
 }
 
