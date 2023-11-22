@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Accordion } from "react-bootstrap";
+import { Container, Row, Col, Accordion, Spinner, Card } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { useParams } from "react-router-dom";
 import MovieCard from "../components/MovieCard";
@@ -16,7 +16,7 @@ function PersonDetails() {
       // Function used to fetch the data for all the movies the actor is in
       const fetchMovies = async () => {
         // Store array of movie data in movieDetails
-        const movieDetails = await Promise.all(
+        let movieDetails = await Promise.all(
           person.credits.map(async (movieId) => {
             const response = await fetch(`/movies/${movieId}`);
             if (!response.ok) {
@@ -27,7 +27,16 @@ function PersonDetails() {
           })
         );
         // Set movies variable to hold array of movie data, ignore null entries
-        setMovies(movieDetails.filter((entry) => entry !== null));
+        movieDetails = movieDetails.filter((entry) => entry !== null);
+        // Sort movies by popularity, with most popular first in the array
+        setMovies(
+          movieDetails.sort((a, b) =>
+            a.popularity === null || b.popularity === null
+              ? 0
+              : b.popularity - a.popularity
+          )
+        );
+        console.log(movieDetails);
       };
 
       fetchMovies();
@@ -50,33 +59,39 @@ function PersonDetails() {
 
   return person ? (
     <Container className="p-3 text-white">
-      <Row className="mb-3">
+      <Row>
         <Col>
           <Image
             src={`https://image.tmdb.org/t/p/original/${person.profile_path}`}
             alt={person.name}
-            width="250px"
+            width="100%"
             rounded
           />
+          <Card>
+            <Card.Body>
+              <Container>
+                <Row>
+                  <Col>Place of Birth: {person.place_of_birth}</Col>
+                </Row>
+                <Row>
+                  <Col>Birthday: {person.birthday}</Col>
+                </Row>
+                {person.deathday != null && (
+                  <Row>
+                    <Col>Death: {person.deathday}</Col>
+                  </Row>
+                )}
+              </Container>
+            </Card.Body>
+          </Card>
         </Col>
-        <Col>
-          <h2>{person.name}</h2>
-          <p> {person.biography} </p>
-        </Col>
-        <Col>
-          <Container>
-            <Row>
-              <Col>Place of Birth: {person.place_of_birth}</Col>
-            </Row>
-            <Row>
-              <Col>Birthday: {person.birthday}</Col>
-            </Row>
-            {person.deathday != null && (
-              <Row>
-                <Col>Death: {person.deathday}</Col>
-              </Row>
-            )}
-          </Container>
+        <Col sm={8}>
+          <Card>
+            <Card.Body>
+              <Card.Title className="fs-3 fw-bold">{person.name}</Card.Title>
+              <Card.Text>{person.biography}</Card.Text>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
       <Row className="flex-nowrap overflow-auto" sm={4}>
@@ -89,7 +104,9 @@ function PersonDetails() {
             );
           })
         ) : (
-          <p>Loading ...</p>
+          <Spinner animation="border" role="status" className="mx-auto">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
         )}
       </Row>
       <Row>
@@ -104,6 +121,7 @@ function PersonDetails() {
                     movies.map((movie) => {
                       return (
                         <li key={movie.id}>
+                          {movie.release_date && movie.release_date + ": "}{" "}
                           <a href={`/movies/${movie.id}`}>{movie.title}</a>
                         </li>
                       );
@@ -111,7 +129,9 @@ function PersonDetails() {
                   }
                 </ul>
               ) : (
-                <p>Loading ...</p>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
               )}
             </Accordion.Body>
           </Accordion.Item>
@@ -119,7 +139,9 @@ function PersonDetails() {
       </Row>
     </Container>
   ) : (
-    <p className="lead text-white">Loading...</p>
+    <Spinner animation="border" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </Spinner>
   );
 }
 
