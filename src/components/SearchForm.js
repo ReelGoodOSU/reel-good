@@ -235,7 +235,7 @@ function SearchForm() {
           />
         ))}
       </ul>
-      <Row>
+      <Row g={false}>
         <Col xs={4} md={3} lg={2}>
           <ul className="genre-filter">
             {availableGenres.map((genreName) => (
