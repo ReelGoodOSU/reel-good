@@ -4,11 +4,17 @@ import "../App.css";
 import { Button, Row, Col, Card, Form, InputGroup } from "react-bootstrap";
 
 // Renders the results for a single search hit
-function SearchResult({ hit, onMovieSelect }) {
-  const [isChecked, setIsChecked] = useState(false);
+function SearchResult({ hit, onMovieSelect, selectedMovies }) {
+  const isMovieSelected = selectedMovies.some(
+    (movie) => movie["_id"] === hit["_id"]
+  );
+  const [isChecked, setIsChecked] = useState(isMovieSelected);
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
     if (event.target.checked) {
+      onMovieSelect(event, hit);
+    } else {
+      console.log(`Unselected movie: ${hit["_source"].title}`);
       onMovieSelect(event, hit);
     }
   };
@@ -86,8 +92,15 @@ function RecommendationForm() {
     if (event.target.checked) {
       setSelectedMovies((prevMovies) => [...prevMovies, hit]);
     } else {
+      console.log(`Trying to remove movie: ${hit["_source"].title}`);
       setSelectedMovies((prevMovies) =>
-        prevMovies.filter((movie) => movie["_id"] !== hit["_id"])
+        prevMovies.filter((movie) => {
+          const isMatch = movie["_id"] !== hit["_id"];
+          console.log(
+            `Comparing IDs: ${movie["_id"]} vs ${hit["_id"]}, isMatch: ${isMatch}`
+          );
+          return isMatch;
+        })
       );
     }
   };
@@ -153,6 +166,7 @@ function RecommendationForm() {
                   hit={hit}
                   key={hit["_id"]}
                   onMovieSelect={onMovieSelect}
+                  selectedMovies={selectedMovies}
                 />
               ))}
             </ul>
@@ -167,11 +181,12 @@ function RecommendationForm() {
   return (
     <div className="search-form">
       <h2>Selected Movies</h2>
-      <ul>
+      <ul key={selectedMovies.length}>
         {selectedMovies.map((movie) => (
           <li key={movie["_id"]}>{movie["_source"].title}</li>
         ))}
       </ul>
+
       <Form onSubmit={handleSubmit}>
         {
           // Basic search bar
