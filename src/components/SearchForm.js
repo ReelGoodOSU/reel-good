@@ -1,11 +1,16 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import "../App.css";
 import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
+import "../App.css";
+import genreIdToName from "./genre"; // import the genre mapping
 
 // Renders the results for a single search hit
 function SearchResult({ hit }) {
-  // TODO: Make the rendering of the movies better include details like actors and genre
+  // Convert genre IDs to genre names
+  const genreNames = hit["_source"].genre_ids.map(
+    (id) => genreIdToName[id] || "Unknown"
+  );
+
   return (
     <Col className="search-entry">
       <Card>
@@ -18,6 +23,9 @@ function SearchResult({ hit }) {
           </i>
           <p>
             <b>Description: </b> {hit["_source"].overview}
+          </p>
+          <p>
+            <b>Genres: </b> {genreNames.join(", ")}
           </p>
         </Card.Body>
       </Card>
@@ -54,14 +62,14 @@ function formReducer(state, event) {
 }
 
 function SearchForm() {
-  // Default formData shouldn't be empty, this is used to hold all data from form
   const [formData, setFormData] = useReducer(formReducer, {
     search_query: "",
     search_by: "title",
   });
-  // Field is rendered once we search
-  const [searchResults, setSearchResults] = useState();
+  const [searchResults, setSearchResults] = useState([]);
+  const [availableGenres, setAvailableGenres] = useState([]);
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
 
   // Function for handling a submit request
   const handleSubmit = (event) => {
@@ -110,27 +118,52 @@ function SearchForm() {
       .then((response) => response.json())
       .then((data) => {
         // This block of code parses and renders the search results
-        // Log data recieved for debug purposes
-        console.log(data);
-        // Render the search results that were returned
-        setSearchResults(
-          <div className="search-results">
-            <ul className="search-entries">
-              {
-                // For each hit we receive render an entry (title and description) for it
-              }
-              {data.map((hit) => (
-                <SearchResult hit={hit} key={hit["_id"]} />
-              ))}
-            </ul>
-          </div>
+
+        // This will extract all genre_ids from the hits, find the unique ids,
+        // map them to their genre names, and finally set the state with these names
+        const uniqueGenreIds = Array.from(
+          new Set(data.flatMap((hit) => hit["_source"].genre_ids || []))
         );
+        // Ensure that we only add valid names
+        const genres = uniqueGenreIds
+          .map((id) => genreIdToName[id])
+          .filter((name) => name);
+        setAvailableGenres(genres);
+        setSearchResults(data);
+        // Reset the selected genres after new search
+        setSelectedGenres([]);
         // Clear autocomplete suggestions when search is triggered
         setAutocompleteSuggestions([]);
       });
   };
 
-  // Generate the HTML to return
+  const handleGenreChange = (event) => {
+    const genreName = event.target.value;
+    if (event.target.checked) {
+      setSelectedGenres((prevGenres) => [...prevGenres, genreName]);
+    } else {
+      setSelectedGenres((prevGenres) =>
+        prevGenres.filter((genre) => genre !== genreName)
+      );
+    }
+  };
+
+  const filteredResults =
+    selectedGenres.length > 0
+      ? searchResults.filter((hit) => {
+          const hitGenreIds = hit["_source"].genre_ids || [];
+          return selectedGenres.some((genreName) =>
+            hitGenreIds.includes(
+              parseInt(
+                Object.keys(genreIdToName).find(
+                  (key) => genreIdToName[key] === genreName
+                )
+              )
+            )
+          );
+        })
+      : searchResults;
+
   return (
     <div className="search-form">
       <Form onSubmit={handleSubmit}>
@@ -150,16 +183,11 @@ function SearchForm() {
             defaultValue={"title"}
           >
             <option value="title">Title</option>
-            <option value="credits">Actor</option>
-            <option value="credits">Director</option>
+            <option value="person">Actor</option>
+            <option value="person">Director</option>
             <option value="genres">Genre</option>
-            <option value="production_companies">Production Company</option>
+            <option value="production_company">Production Company</option>
           </Form.Select>
-          {
-            // Adding this messes up the styling, figure out how to fix this
-            // I think it's important for accessability?
-            //<Form.Label for="search-bar">Search</Form.Label>
-          }
           <Form.Control
             name="search_query"
             placeholder="Search"
@@ -168,23 +196,10 @@ function SearchForm() {
             id="search-bar"
             style={{ width: "80%" }}
           />
-          {
-            // Adding this messes up the styling, figure out how to fix this
-            // I think it's important for accessability?
-            //<Form.Label>Search by</Form.Label>
-          }
           <Button type="submit" variant="primary">
             Submit
           </Button>
         </InputGroup>
-
-        {
-          // Note we are missing a label, I think it looks better without it. How can we include it to
-          // improve accessability without having it show up?
-          // TODO: It would be cool if we could use this for a drop-down menu
-          // https://react-bootstrap.github.io/docs/components/dropdowns/
-          // This is a dropdown menu for selecting what to search by
-        }
       </Form>
       <br />
       {/* Autocomplete suggestions */}
@@ -197,10 +212,28 @@ function SearchForm() {
           />
         ))}
       </ul>
-      {
-        // Renders the results of the search after submitted
-        searchResults
-      }
+      <ul className="genre-filter">
+        {availableGenres.map((genreName) => (
+          <Form.Check
+            type="checkbox"
+            label={genreName}
+            key={genreName}
+            value={genreName}
+            onChange={handleGenreChange}
+          />
+        ))}
+      </ul>
+      <br />
+      <div className="search-results">
+        <ul className="search-entries">
+          {
+            // Renders the results of the search after submitted
+            filteredResults.map((hit) => (
+              <SearchResult hit={hit} key={hit["_id"]} />
+            ))
+          }
+        </ul>
+      </div>
     </div>
   );
 }

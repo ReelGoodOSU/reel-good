@@ -21,17 +21,26 @@ def get_current_time():
     return {"time": time.time()}
 
 @app.route("/movies/<movie_id>")
+<<<<<<< HEAD
 def get_movieData(movie_id):
+=======
+def get_movie_data(movie_id):
+>>>>>>> refs/remotes/origin/29-create-cast-page
     global ES
     try:
         # send get query for movie ID
         resp = ES.get(index="movie", id=movie_id)
+<<<<<<< HEAD
         print(f"back booty: {resp}")
         return resp['_source'], 200  
+=======
+        return resp['_source'], 200
+>>>>>>> refs/remotes/origin/29-create-cast-page
     except Exception as e:
         # log the exception
         print(f"Error fetching movie data: {e}")
         return {"error": "Error fetching movie data"}, 500
+<<<<<<< HEAD
     
 @app.route("/actors/<actor_id>")
 def get_actorData(actor_id):
@@ -46,6 +55,8 @@ def get_actorData(actor_id):
         print(f"Error fetching actor data: {e}")
         return {"error": "Error fetching actor data"}, 500
    
+=======
+>>>>>>> refs/remotes/origin/29-create-cast-page
 
 # Demo on how to get info from the elasticsearch client
 @app.route("/info")
@@ -53,6 +64,11 @@ def get_elastic_info():
     global ES
     return ES.info(pretty=True).body
 
+@app.route("/person/<id>")
+def get_person(id):
+    global ES
+    resp = ES.get(index="person", id=id)
+    return resp["_source"]
 
 @app.route("/search")
 def search_elastic():
