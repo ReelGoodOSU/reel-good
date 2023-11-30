@@ -13,6 +13,9 @@ function SearchResult({ hit }) {
 
   return (
     <Col className="search-entry d-flex justify-content-center" xxl={8}>
+      {
+        //TODO MAKE THE CARDS THAT DON'T HAVE A BACKDROP RENDER CORRECTLY
+      }
       <Card className="bg-dark text-white">
         <Card.Img
           variant="bottom"
@@ -30,24 +33,19 @@ function SearchResult({ hit }) {
               display: "inline-block",
               opacity: ".7",
               padding: "5px",
+              color: "white",
             }}
             className="bg-dark cardClass"
           >
-            <b style={{ color: "white" }}>Movie: </b>
-            <h4>
-              <Link
-                to={"/movies/" + hit["_id"]}
-                className="App-link"
-                style={{ color: "white" }}
-              >
-                {hit["_source"].title}
-              </Link>
-            </h4>
+            <Card.Title>
+              {hit["_source"].title}
+            </Card.Title>
             {/* <p>
             <b>Description: </b> {hit["_source"].overview}
           </p> */}
           </Card>
         </Card.ImgOverlay>
+        <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
       </Card>
     </Col>
   );
