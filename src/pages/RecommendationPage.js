@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-} from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import RecommendationForm from "../components/RecommendationForm";
 
 function RecommendationPage() {
@@ -21,7 +15,6 @@ function RecommendationPage() {
           </h1>
           <p className="lead text-white">Select 5 or more movies to begin!</p>
         </Col>
-        <Col></Col>
       </Row>
       <Row className="mb-3">
         {
