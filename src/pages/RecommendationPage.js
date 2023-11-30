@@ -4,9 +4,6 @@ import {
   Row,
   Col,
   Card,
-  Button,
-  Navbar,
-  Nav,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import RecommendationForm from "../components/RecommendationForm";
@@ -15,25 +12,6 @@ function RecommendationPage() {
   return (
     <Container fluid className="p-3">
       <Row className="mb-1 mt-2">
-        <Navbar bg="dark" data-bs-theme="dark">
-          <Container>
-            <Navbar.Brand href="/">Home</Navbar.Brand>
-            <Nav className="me-auto">
-              <Nav.Link href="#">About Us</Nav.Link>
-              <Nav.Link href="/recommendation">Recommendations</Nav.Link>
-              <Nav.Link href="#">Browse</Nav.Link>
-            </Nav>
-            <div className="btn-group">
-              <Button variant="success" as={Link} to="/login">
-                Log in
-              </Button>
-              <Button variant="primary" as={Link} to="/signup">
-                Sign up
-              </Button>
-            </div>
-          </Container>
-        </Navbar>
-
         {
           // Header of the website, has title and description of the website
         }
