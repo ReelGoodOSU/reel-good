@@ -238,38 +238,28 @@ def search_autocomplete_suggestions():
     return resp["hits"]["hits"]
 
 
-''' 
-Dig for recommendations based on set of 3 or more movie ID's 
-'''
 @app.route("/get-recommendations")
 def post_retrieve_recommendations_from_set():
+    """
+    Dig for recommendations based on set of 3 or more movie ID's
+    """
     global ES
     # Retrieve list of movie ID's to start search from
-    seed_set = request.args.getlist('seeds[]')
-    
+    seed_set = request.args.getlist("seeds[]")
+    seen_ids = {int(x) for x in seed_set}
+
     recommendations_to_return = []
 
     for movie_id in seed_set:
         # Get movie details from ID
         movie_details = ES.get(index="movie", id=movie_id)
         for rec_id in movie_details["_source"]["recommendations"]:
-            rec = ES.get(index="movie", id=rec_id)
-            recommendations_to_return.append(rec.body)
+            if rec_id not in seen_ids:
+                rec = ES.get(index="movie", id=rec_id)
+                recommendations_to_return.append(rec.body)
+                seen_ids.add(rec_id)
 
     return recommendations_to_return
-
-
-
-
-"""
-For the backend this is what I need to know to handle a search query and returning the result
-
-1. How is the data from the search form returned to flask? - At the moment I am assuming we use a GET request.
-    We might need to use POST if too much data is being passed, or if we want to send JSON data
-2. How do I determine the field I perform the query on (actor, genre, title, etc)?
-3. How do I know the name of fields of data items?
-4. How should I format the data to be returned?
-"""
 
 
 if __name__ == "__main__":
