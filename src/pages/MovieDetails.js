@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "../App.css";
 import { Card, Row, Col } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 
 function MovieDetails() {
@@ -116,7 +116,7 @@ function MovieDetails() {
                     <ul>
                         {recommendedMovies.map(recommendedMovie => (
                             <li key={recommendedMovie.id}>
-                                <a href={`/movies/${recommendedMovie.id}`}>{recommendedMovie.title}</a>
+                                <Link to={`/movies/${recommendedMovie.id}`}>{recommendedMovie.title}</Link>
                             </li>
                         ))}
                     </ul>
