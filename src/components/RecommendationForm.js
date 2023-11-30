@@ -86,11 +86,15 @@ function RecommendationForm() {
   const [searchResults, setSearchResults] = useState();
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
   const [selectedMovies, setSelectedMovies] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
 
   const onMovieSelect = (event, hit) => {
     console.log(`Selected movie: ${hit["_source"].title}`);
     if (event.target.checked) {
       setSelectedMovies((prevMovies) => [...prevMovies, hit]);
+
+      // todo:
+      // render Get Recommendations button available when 5th movie is selected
     } else {
       console.log(`Trying to remove movie: ${hit["_source"].title}`);
       setSelectedMovies((prevMovies) =>
@@ -102,6 +106,8 @@ function RecommendationForm() {
           return isMatch;
         })
       );
+      // todo:
+      // render Get Recommendations button unavailable when 5th movie is deselected
     }
   };
 
@@ -175,6 +181,40 @@ function RecommendationForm() {
         // Clear autocomplete suggestions when search is triggered
         setAutocompleteSuggestions([]);
       });
+  };
+
+  const GetRecommendationsButton = () => {
+    const handleClick = async () => {
+      const query_string = selectedMovies
+        .map((selection, index) => `seeds[]=${selection["_source"].id}`)
+        .join("&");
+
+      fetch("/get-recommendations?" + query_string)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setRecommendations(data); // Set recommendations in the state
+        });
+    };
+
+    return (
+      <div>
+        <button onClick={handleClick}>Get Recommendations</button>
+        {recommendations.length > 0 && (
+          <div>
+            <h3>Recommendations:</h3>
+            <ul>
+              {recommendations.map((recommendation) => (
+                <li key={recommendation["_source"].id}>
+                  <strong>Title:</strong> {recommendation["_source"].title},{" "}
+                  <strong>ID:</strong> {recommendation["_source"].id}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Generate the HTML to return
@@ -255,6 +295,7 @@ function RecommendationForm() {
         // Renders the results of the search after submitted
         searchResults
       }
+      <GetRecommendationsButton />
     </div>
   );
 }

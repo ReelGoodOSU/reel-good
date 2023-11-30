@@ -238,6 +238,29 @@ def search_autocomplete_suggestions():
     return resp["hits"]["hits"]
 
 
+''' 
+Dig for recommendations based on set of 3 or more movie ID's 
+'''
+@app.route("/get-recommendations")
+def post_retrieve_recommendations_from_set():
+    global ES
+    # Retrieve list of movie ID's to start search from
+    seed_set = request.args.getlist('seeds[]')
+    
+    recommendations_to_return = []
+
+    for movie_id in seed_set:
+        # Get movie details from ID
+        movie_details = ES.get(index="movie", id=movie_id)
+        for rec_id in movie_details["_source"]["recommendations"]:
+            rec = ES.get(index="movie", id=rec_id)
+            recommendations_to_return.append(rec.body)
+
+    return recommendations_to_return
+
+
+
+
 """
 For the backend this is what I need to know to handle a search query and returning the result
 
