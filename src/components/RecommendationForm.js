@@ -1,7 +1,15 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
-import { Button, Row, Col, Card, Form, InputGroup } from "react-bootstrap";
+import {
+  Button,
+  Row,
+  Col,
+  Card,
+  Form,
+  InputGroup,
+  Container,
+} from "react-bootstrap";
 
 // Renders the results for a single search hit
 function SearchResult({ hit, onMovieSelect, selectedMovies }) {
@@ -18,33 +26,32 @@ function SearchResult({ hit, onMovieSelect, selectedMovies }) {
       onMovieSelect(event, hit);
     }
   };
-  // TODO: Make the rendering of the movies better include details like actors and genre
   return (
-    <Col className="search-entry">
-      <Card>
-        <Card.Body>
-          <Row>
-            <Col>
-              <b>Movie: </b>
-              <i>
-                <Link to={"/movies/" + hit["_id"]} className="App-link">
-                  {hit["_source"].title}
-                </Link>
-              </i>
-            </Col>
-            <Col>
-              <Form.Check // prettier-ignore
-                type="switch"
-                id="custom-switch"
-                label="I Liked This Movie"
-                checked={isChecked}
-                onChange={handleCheckboxChange}
-              />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-    </Col>
+    <Card className="bg-dark text-white search-entry d-flex justify-content-center">
+      <Card.Img
+        variant="top"
+        src={
+          "https://image.tmdb.org/t/p/original/" + hit["_source"].poster_path
+        }
+        alt="Movie Poster"
+        className="movie-poster"
+      />
+      <Card.Body>
+        <Link
+          to={"/movies/" + hit["_id"]}
+          className="link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+        >
+          <Card.Title>{hit["_source"].title}</Card.Title>
+        </Link>
+        <Form.Check // prettier-ignore
+          type="switch"
+          id="custom-switch"
+          label="I Liked This Movie"
+          checked={isChecked}
+          onChange={handleCheckboxChange}
+        />
+      </Card.Body>
+    </Card>
   );
 }
 
@@ -163,19 +170,23 @@ function RecommendationForm() {
         // Render the search results that were returned
         setSearchResults(
           <div className="search-results">
-            <ul className="search-entries">
-              {
-                // For each hit we receive render an entry (title and description) for it
-              }
-              {data.map((hit) => (
-                <SearchResult
-                  hit={hit}
-                  key={hit["_id"]}
-                  onMovieSelect={onMovieSelect}
-                  selectedMovies={selectedMovies}
-                />
-              ))}
-            </ul>
+            {
+              // For each hit we receive render an entry (title and description) for it
+            }
+            <Container>
+              <Row>
+                {data.map((hit) => (
+                  <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
+                    <SearchResult
+                      hit={hit}
+                      key={hit["_id"]}
+                      onMovieSelect={onMovieSelect}
+                      selectedMovies={selectedMovies}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </Container>
           </div>
         );
         // Clear autocomplete suggestions when search is triggered
@@ -217,7 +228,7 @@ function RecommendationForm() {
     } else {
       // Render a different card when there's no movie poster
       return (
-        <Card className=" search-entry d-flex justify-content-center">
+        <Card className="search-entry d-flex justify-content-center h-100">
           <Card.Body>
             <Card.Title>{hit["_source"].title}</Card.Title>
             <Card.Text>{hit["_source"].overview}</Card.Text>
@@ -240,11 +251,14 @@ function RecommendationForm() {
           console.log(data);
           setRecommendations(data); // Set recommendations in the state
         });
+      setSearchResults(null);
     };
 
     return (
       <div>
-        <button onClick={handleClick}>Get Recommendations</button>
+        <Button variant="primary" onClick={handleClick}>
+          Get Recommendations
+        </Button>
         {recommendations.length > 0 && (
           <div>
             <h3>Recommendations:</h3>
@@ -252,10 +266,6 @@ function RecommendationForm() {
               <Col xs={8} md={9} lg={10}>
                 <Row g={false}>
                   {recommendations.map((recommendation) => (
-                    // <li key={recommendation["_source"].id}>
-                    //   <strong>Title:</strong> {recommendation["_source"].title},{" "}
-                    //   <strong>ID:</strong> {recommendation["_source"].id}
-                    // </li>
                     <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
                       <RecommendationResult
                         hit={recommendation}
