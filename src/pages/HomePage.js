@@ -17,11 +17,11 @@ function HomePage() {
       <Row className="mb-1 mt-2">
         <Navbar bg="dark" data-bs-theme="dark">
           <Container>
-            <Navbar.Brand href="#home">Home</Navbar.Brand>
+            <Navbar.Brand href="/">Home</Navbar.Brand>
             <Nav className="me-auto">
-              <Nav.Link href="#home">About Us</Nav.Link>
-              <Nav.Link href="#features">Recommendations</Nav.Link>
-              <Nav.Link href="#pricing">Browse</Nav.Link>
+              <Nav.Link href="#">About Us</Nav.Link>
+              <Nav.Link href="#">Recommendations</Nav.Link>
+              <Nav.Link href="#">Browse</Nav.Link>
             </Nav>
             <div className="btn-group">
               <Button variant="success" as={Link} to="/login">
@@ -46,7 +46,6 @@ function HomePage() {
             preferences and ratings.
           </p>
         </Col>
-        <Col></Col>
       </Row>
       <Row className="mb-3">
         {
