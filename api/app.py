@@ -20,6 +20,17 @@ app = Flask(__name__)
 def get_current_time():
     return {"time": time.time()}
 
+@app.route("/movies/<movie_id>")
+def get_movie_data(movie_id):
+    global ES
+    try:
+        # send get query for movie ID
+        resp = ES.get(index="movie", id=movie_id)
+        return resp['_source'], 200
+    except Exception as e:
+        # log the exception
+        print(f"Error fetching movie data: {e}")
+        return {"error": "Error fetching movie data"}, 500
 
 # Demo on how to get info from the elasticsearch client
 @app.route("/info")
@@ -27,6 +38,11 @@ def get_elastic_info():
     global ES
     return ES.info(pretty=True).body
 
+@app.route("/person/<id>")
+def get_person(id):
+    global ES
+    resp = ES.get(index="person", id=id)
+    return resp["_source"]
 
 @app.route("/search")
 def search_elastic():
