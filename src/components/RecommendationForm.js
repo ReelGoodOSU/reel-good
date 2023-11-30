@@ -204,12 +204,54 @@ function RecommendationForm() {
           <div>
             <h3>Recommendations:</h3>
             <ul>
-              {recommendations.map((recommendation) => (
-                <li key={recommendation["_source"].id}>
-                  <strong>Title:</strong> {recommendation["_source"].title},{" "}
-                  <strong>ID:</strong> {recommendation["_source"].id}
-                </li>
-              ))}
+              <Col xs={8} md={9} lg={10}>
+                <Row g={false}>
+                  {recommendations.map((recommendation) => (
+                    // <li key={recommendation["_source"].id}>
+                    //   <strong>Title:</strong> {recommendation["_source"].title},{" "}
+                    //   <strong>ID:</strong> {recommendation["_source"].id}
+                    // </li>
+                    <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
+                      <Card
+                        className="bg-dark text-white"
+                        style={{ width: "100%" }}
+                      >
+                        <Card.Img
+                          variant="bottom"
+                          src={
+                            "https://image.tmdb.org/t/p/original/" +
+                            recommendation["_source"].backdrop_path
+                          }
+                          alt="Movie Poster"
+                          className="movie-poster"
+                          class="card-img-top"
+                        />
+                        <Card.ImgOverlay>
+                          <Card
+                            style={{
+                              display: "inline-block",
+                              opacity: ".7",
+                              padding: "5px",
+                            }}
+                            className="bg-dark cardClass"
+                          >
+                            <b style={{ color: "white" }} />
+                            <h4>
+                              <Link
+                                to={"/movies/" + recommendation["_id"]}
+                                className="App-link"
+                                style={{ color: "white" }}
+                              >
+                                {recommendation["_source"].title}
+                              </Link>
+                            </h4>
+                          </Card>
+                        </Card.ImgOverlay>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </Col>
             </ul>
           </div>
         )}
