@@ -1,6 +1,6 @@
 import React, { useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
+import { Button, Col, Row, Card, Form, InputGroup } from "react-bootstrap";
 import "../App.css";
 import genreIdToName from "./genre"; // import the genre mapping
 
@@ -11,26 +11,48 @@ function SearchResult({ hit }) {
     (id) => genreIdToName[id] || "Unknown"
   );
 
-  return (
-    <Col className="search-entry">
-      <Card>
-        <Card.Body>
-          <b>Movie: </b>
-          <i>
-            <Link to={"/movies/" + hit["_id"]} className="App-link">
-              {hit["_source"].title}
-            </Link>
-          </i>
-          <p>
-            <b>Description: </b> {hit["_source"].overview}
-          </p>
-          <p>
-            <b>Genres: </b> {genreNames.join(", ")}
-          </p>
-        </Card.Body>
+  // Check if the movie poster exists
+  if (hit["_source"].backdrop_path) {
+    return (
+      <Card className="bg-dark text-white search-entry d-flex justify-content-center">
+        <Card.Img
+          variant="bottom"
+          src={
+            "https://image.tmdb.org/t/p/original/" +
+            hit["_source"].backdrop_path
+          }
+          alt="Movie Poster"
+          className="movie-poster"
+          class="card-img-top"
+        />
+        <Card.ImgOverlay>
+          <Card
+            style={{
+              display: "inline-block",
+              opacity: ".7",
+              padding: "5px",
+              color: "white",
+            }}
+            className="bg-dark cardClass"
+          >
+            <Card.Title>{hit["_source"].title}</Card.Title>
+          </Card>
+        </Card.ImgOverlay>
+        <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
       </Card>
-    </Col>
-  );
+    );
+  } else {
+    // Render a different card when there's no movie poster
+    return (
+      <Card className="search-entry d-flex justify-content-center h-100">
+        <Card.Body>
+          <Card.Title>{hit["_source"].title}</Card.Title>
+          <Card.Text>{hit["_source"].overview}</Card.Text>
+        </Card.Body>
+        <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
+      </Card>
+    );
+  }
 }
 
 function AutocompleteSuggestion({ hit, onSuggestionClick }) {
@@ -212,28 +234,33 @@ function SearchForm() {
           />
         ))}
       </ul>
-      <ul className="genre-filter">
-        {availableGenres.map((genreName) => (
-          <Form.Check
-            type="checkbox"
-            label={genreName}
-            key={genreName}
-            value={genreName}
-            onChange={handleGenreChange}
-          />
-        ))}
-      </ul>
-      <br />
-      <div className="search-results">
-        <ul className="search-entries">
-          {
-            // Renders the results of the search after submitted
-            filteredResults.map((hit) => (
-              <SearchResult hit={hit} key={hit["_id"]} />
-            ))
-          }
-        </ul>
-      </div>
+      <Row>
+        <Col xs={4} md={3} lg={2}>
+          <ul className="genre-filter">
+            {availableGenres.map((genreName) => (
+              <Form.Check
+                type="checkbox"
+                label={genreName}
+                key={genreName}
+                value={genreName}
+                onChange={handleGenreChange}
+              />
+            ))}
+          </ul>
+        </Col>
+        <Col xs={8} md={9} lg={10}>
+          <Row>
+            {
+              // Renders the results of the search after submitted
+              filteredResults.map((hit) => (
+                <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
+                  <SearchResult hit={hit} key={hit["_id"]} />
+                </Col>
+              ))
+            }
+          </Row>
+        </Col>
+      </Row>
     </div>
   );
 }
