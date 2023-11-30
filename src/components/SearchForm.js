@@ -11,40 +11,48 @@ function SearchResult({ hit }) {
     (id) => genreIdToName[id] || "Unknown"
   );
 
-  return (
-    <Card className="bg-dark text-white search-entry d-flex justify-content-center">
-      {
-        //TODO MAKE THE CARDS THAT DON'T HAVE A BACKDROP RENDER CORRECTLY
-      }
-
-      <Card.Img
-        variant="bottom"
-        src={
-          "https://image.tmdb.org/t/p/original/" + hit["_source"].backdrop_path
-        }
-        alt="Movie Poster"
-        className="movie-poster"
-        class="card-img-top"
-      />
-      <Card.ImgOverlay>
-        <Card
-          style={{
-            display: "inline-block",
-            opacity: ".7",
-            padding: "5px",
-            color: "white",
-          }}
-          className="bg-dark cardClass"
-        >
+  // Check if the movie poster exists
+  if (hit["_source"].backdrop_path) {
+    return (
+      <Card className="bg-dark text-white search-entry d-flex justify-content-center">
+        <Card.Img
+          variant="bottom"
+          src={
+            "https://image.tmdb.org/t/p/original/" +
+            hit["_source"].backdrop_path
+          }
+          alt="Movie Poster"
+          className="movie-poster"
+          class="card-img-top"
+        />
+        <Card.ImgOverlay>
+          <Card
+            style={{
+              display: "inline-block",
+              opacity: ".7",
+              padding: "5px",
+              color: "white",
+            }}
+            className="bg-dark cardClass"
+          >
+            <Card.Title>{hit["_source"].title}</Card.Title>
+          </Card>
+        </Card.ImgOverlay>
+        <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
+      </Card>
+    );
+  } else {
+    // Render a different card when there's no movie poster
+    return (
+      <Card className=" search-entry d-flex justify-content-center">
+        <Card.Body>
           <Card.Title>{hit["_source"].title}</Card.Title>
-          {/* <p>
-            <b>Description: </b> {hit["_source"].overview}
-          </p> */}
-        </Card>
-      </Card.ImgOverlay>
-      <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
-    </Card>
-  );
+          <Card.Text>{hit["_source"].overview}</Card.Text>
+        </Card.Body>
+        <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
+      </Card>
+    );
+  }
 }
 
 function AutocompleteSuggestion({ hit, onSuggestionClick }) {
