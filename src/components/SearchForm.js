@@ -44,7 +44,7 @@ function SearchResult({ hit }) {
   } else {
     // Render a different card when there's no movie poster
     return (
-      <Card className=" search-entry d-flex justify-content-center">
+      <Card className="search-entry d-flex justify-content-center h-100">
         <Card.Body>
           <Card.Title>{hit["_source"].title}</Card.Title>
           <Card.Text>{hit["_source"].overview}</Card.Text>
