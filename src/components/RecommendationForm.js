@@ -183,6 +183,51 @@ function RecommendationForm() {
       });
   };
 
+  function RecommendationResult({ hit }) {
+    // Check if the movie poster exists
+    if (hit["_source"].backdrop_path) {
+      return (
+        <Card className="bg-dark text-white search-entry d-flex justify-content-center">
+          <Card.Img
+            variant="bottom"
+            src={
+              "https://image.tmdb.org/t/p/original/" +
+              hit["_source"].backdrop_path
+            }
+            alt="Movie Poster"
+            className="movie-poster"
+            class="card-img-top"
+          />
+          <Card.ImgOverlay>
+            <Card
+              style={{
+                display: "inline-block",
+                opacity: ".7",
+                padding: "5px",
+                color: "white",
+              }}
+              className="bg-dark cardClass"
+            >
+              <Card.Title>{hit["_source"].title}</Card.Title>
+            </Card>
+          </Card.ImgOverlay>
+          <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
+        </Card>
+      );
+    } else {
+      // Render a different card when there's no movie poster
+      return (
+        <Card className=" search-entry d-flex justify-content-center">
+          <Card.Body>
+            <Card.Title>{hit["_source"].title}</Card.Title>
+            <Card.Text>{hit["_source"].overview}</Card.Text>
+          </Card.Body>
+          <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
+        </Card>
+      );
+    }
+  }
+
   const GetRecommendationsButton = () => {
     const handleClick = async () => {
       const query_string = selectedMovies
@@ -212,42 +257,10 @@ function RecommendationForm() {
                     //   <strong>ID:</strong> {recommendation["_source"].id}
                     // </li>
                     <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
-                      <Card
-                        className="bg-dark text-white"
-                        style={{ width: "100%" }}
-                      >
-                        <Card.Img
-                          variant="bottom"
-                          src={
-                            "https://image.tmdb.org/t/p/original/" +
-                            recommendation["_source"].backdrop_path
-                          }
-                          alt="Movie Poster"
-                          className="movie-poster"
-                          class="card-img-top"
-                        />
-                        <Card.ImgOverlay>
-                          <Card
-                            style={{
-                              display: "inline-block",
-                              opacity: ".7",
-                              padding: "5px",
-                            }}
-                            className="bg-dark cardClass"
-                          >
-                            <b style={{ color: "white" }} />
-                            <h4>
-                              <Link
-                                to={"/movies/" + recommendation["_id"]}
-                                className="App-link"
-                                style={{ color: "white" }}
-                              >
-                                {recommendation["_source"].title}
-                              </Link>
-                            </h4>
-                          </Card>
-                        </Card.ImgOverlay>
-                      </Card>
+                      <RecommendationResult
+                        hit={recommendation}
+                        key={recommendation["_id"]}
+                      />
                     </Col>
                   ))}
                 </Row>

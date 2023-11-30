@@ -19,9 +19,9 @@ function RecommendationPage() {
           <Container>
             <Navbar.Brand href="/">Home</Navbar.Brand>
             <Nav className="me-auto">
-              {/* <Nav.Link href="#home">About Us</Nav.Link> */}
+              <Nav.Link href="#">About Us</Nav.Link>
               <Nav.Link href="/recommendation">Recommendations</Nav.Link>
-              {/* <Nav.Link href="#pricing">Browse</Nav.Link> */}
+              <Nav.Link href="#">Browse</Nav.Link>
             </Nav>
             <div className="btn-group">
               <Button variant="success" as={Link} to="/login">
