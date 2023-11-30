@@ -12,42 +12,38 @@ function SearchResult({ hit }) {
   );
 
   return (
-    <Col className="search-entry d-flex justify-content-center" xxl={8}>
+    <Card className="bg-dark text-white search-entry d-flex justify-content-center">
       {
         //TODO MAKE THE CARDS THAT DON'T HAVE A BACKDROP RENDER CORRECTLY
       }
-      <Card className="bg-dark text-white">
-        <Card.Img
-          variant="bottom"
-          src={
-            "https://image.tmdb.org/t/p/original/" +
-            hit["_source"].backdrop_path
-          }
-          alt="Movie Poster"
-          className="movie-poster"
-          class="card-img-top"
-        />
-        <Card.ImgOverlay>
-          <Card
-            style={{
-              display: "inline-block",
-              opacity: ".7",
-              padding: "5px",
-              color: "white",
-            }}
-            className="bg-dark cardClass"
-          >
-            <Card.Title>
-              {hit["_source"].title}
-            </Card.Title>
-            {/* <p>
+
+      <Card.Img
+        variant="bottom"
+        src={
+          "https://image.tmdb.org/t/p/original/" + hit["_source"].backdrop_path
+        }
+        alt="Movie Poster"
+        className="movie-poster"
+        class="card-img-top"
+      />
+      <Card.ImgOverlay>
+        <Card
+          style={{
+            display: "inline-block",
+            opacity: ".7",
+            padding: "5px",
+            color: "white",
+          }}
+          className="bg-dark cardClass"
+        >
+          <Card.Title>{hit["_source"].title}</Card.Title>
+          {/* <p>
             <b>Description: </b> {hit["_source"].overview}
           </p> */}
-          </Card>
-        </Card.ImgOverlay>
-        <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
-      </Card>
-    </Col>
+        </Card>
+      </Card.ImgOverlay>
+      <Link to={"/movies/" + hit["_id"]} className="stretched-link"></Link>
+    </Card>
   );
 }
 
