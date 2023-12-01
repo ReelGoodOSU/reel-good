@@ -4,9 +4,6 @@ import {
   Row,
   Col,
   Card,
-  Button,
-  Navbar,
-  Nav,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import SearchForm from "../components/SearchForm";
