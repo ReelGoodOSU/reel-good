@@ -256,7 +256,11 @@ function RecommendationForm() {
 
     return (
       <div>
-        <Button variant="primary" onClick={handleClick}>
+        <Button
+          variant="primary"
+          onClick={handleClick}
+          disabled={selectedMovies.length < 5}
+        >
           Get Recommendations
         </Button>
         {recommendations.length > 0 && (
@@ -282,15 +286,27 @@ function RecommendationForm() {
     );
   };
 
+  const ClearSelectionButton = () => {
+    const handleClick = (event) => {
+      setSelectedMovies([]);
+      setRecommendations([]);
+      setSearchResults(null);
+    };
+
+    if (selectedMovies.length > 0)
+      return <Button variant="danger" onClick={handleClick}>Clear Selection</Button>;
+  };
+
   // Generate the HTML to return
   return (
     <div className="search-form">
-      <h2>Selected Movies</h2>
+      <h4>Selected Movies</h4>
       <ul key={selectedMovies.length}>
         {selectedMovies.map((movie) => (
           <li key={movie["_id"]}>{movie["_source"].title}</li>
         ))}
       </ul>
+      <ClearSelectionButton />
 
       <Form onSubmit={handleSubmit}>
         {
@@ -334,7 +350,7 @@ function RecommendationForm() {
             //<Form.Label>Search by</Form.Label>
           }
           <Button type="submit" variant="primary">
-            Submit
+            Search
           </Button>
         </InputGroup>
 
