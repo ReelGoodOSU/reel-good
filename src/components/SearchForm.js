@@ -220,7 +220,7 @@ function SearchForm() {
             style={{ width: "80%" }}
           />
           <Button type="submit" variant="primary">
-            Submit
+            Search
           </Button>
         </InputGroup>
       </Form>
