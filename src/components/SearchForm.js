@@ -205,8 +205,9 @@ function SearchForm() {
             defaultValue={"title"}
           >
             <option value="title">Title</option>
-            <option value="person">Actor</option>
-            <option value="person">Director</option>
+            <option value="?">Can't recall the name?(BETA)</option>
+            <option value="credits">Actor</option>
+            <option value="director">Director</option>
             <option value="genres">Genre</option>
             <option value="production_company">Production Company</option>
           </Form.Select>
@@ -219,7 +220,7 @@ function SearchForm() {
             style={{ width: "80%" }}
           />
           <Button type="submit" variant="primary">
-            Submit
+            Search
           </Button>
         </InputGroup>
       </Form>
