@@ -20,23 +20,26 @@ app = Flask(__name__)
 def get_current_time():
     return {"time": time.time()}
 
+
 @app.route("/movies/<movie_id>")
 def get_movie_data(movie_id):
     global ES
     try:
         # send get query for movie ID
         resp = ES.get(index="movie", id=movie_id)
-        return resp['_source'], 200
+        return resp["_source"], 200
     except Exception as e:
         # log the exception
         print(f"Error fetching movie data: {e}")
         return {"error": "Error fetching movie data"}, 500
+
 
 # Demo on how to get info from the elasticsearch client
 @app.route("/info")
 def get_elastic_info():
     global ES
     return ES.info(pretty=True).body
+
 
 @app.route("/person/<id>")
 def get_person(id):
@@ -47,6 +50,11 @@ def get_person(id):
 
 @app.route("/search")
 def search_elastic():
+    """Perform a search, requires two parameters and one optional
+    search_query - text used for the search
+    search_by - Name of the index to search by
+    size - max number of search entries to return
+    """
     query = request.args.get("search_query")
     topic = request.args.get("search_by")
     size = request.args.get("size") or 25
@@ -56,13 +64,15 @@ def search_elastic():
 
     if topic == "title":
         return search_movies_directly(topic, query, size)
-    elif topic in ["production_company", "actor", "credits", "genres", "director"]:
+    elif topic in {"production_company", "actor", "credits", "genres", "director"}:
         return search_movies_indirectly(topic, query, size)
     else:
         return search_movies_indirectly(topic, query, size)
-        #pass
+
 
 def search_movies_directly(topic, query, size):
+    # Send query and return the top size hits back (sorted by popularity so we actually
+    # get good search results)
     resp = ES.search(
         index="movie",
         query={
@@ -79,6 +89,7 @@ def search_movies_directly(topic, query, size):
         sort=[{"popularity": {"order": "desc"}}],
         size=size,
     )
+    # No hits? Try again with OR matching
     if len(resp["hits"]["hits"]) == 0:
         resp = ES.search(
             index="movie",
@@ -98,10 +109,10 @@ def search_movies_directly(topic, query, size):
         )
     return resp["hits"]["hits"]
 
-def search_movies_indirectly(topic, query, size):
 
-    #fuzz search
-    fuzz_fields=["overview", "keywords"]
+def search_movies_indirectly(topic, query, size):
+    # fuzz search
+    fuzz_fields = ["overview", "keywords"]
     if topic == "?":
         print("DEBUG: Entered ? search 1")
         resp = ES.search(
@@ -114,13 +125,12 @@ def search_movies_indirectly(topic, query, size):
                     "operator": "OR",
                     "fuzziness": "1",
                     "auto_generate_synonyms_phrase_query": "true",
-                    "minimum_should_match": 2
+                    "minimum_should_match": 2,
                 }
-            }
+            },
         )
         print("DEBUG: Entered ? search 2")
         return resp["hits"]["hits"]
-    
 
     # Adjust index and field based on topic
     if topic == "production_company":
@@ -141,66 +151,46 @@ def search_movies_indirectly(topic, query, size):
         field = "name"
         id_field = "credits.crew.id"
         print(f"DEBUG: searched by director")
-    
+
     # Add more conditions for other topics
-    ids=[]
+    ids = []
     # First search to get IDs if topic is production_company
-    if 1 == 1: # this if can be safely deleted, but just in case we keep it here for easier indentation
-        id_response = ES.search(
-            index=index,
-            query={
-                "match": {
-                    field: {
-                        "query": query,
-                        "operator": "OR"
-                    }
-                }
-            }
-        )
-        ids = [hit["_id"] for hit in id_response["hits"]["hits"]]
-        print(f"indirect_search-ids1: {ids}")
-        
+    id_response = ES.search(
+        index=index, query={"match": {field: {"query": query, "operator": "OR"}}}
+    )
+    ids = [hit["_id"] for hit in id_response["hits"]["hits"]]
+    print(f"indirect_search-ids1: {ids}")
+
     # debug statements
     print(f"DEBUG:indirect_search-id_field: {id_field}")
     print(f"DEBUG:indirect_search-ids: {ids}")
 
-
     # Second search in movie index
     if topic == "director":
-        return search_director(id_field,ids,size)
+        return search_director(id_field, ids, size)
 
     resp = ES.search(
         index="movie",
-        query={
-            "terms": {
-                id_field: ids 
-            }
-        },
+        query={"terms": {id_field: ids}},
         sort=[{"popularity": {"order": "desc"}}],
-        size=size
+        size=size,
     )
     return resp["hits"]["hits"]
 
-def search_director(id_field,ids,size):
+
+def search_director(id_field, ids, size):
     resp = ES.search(
         index="movie",
         query={
             "bool": {
-                "must":[
-                    {
-                        "terms": {
-                            id_field: ids 
-                        }
-                    },{
-                        "term":{
-                        "credits.cre.job.keyword":"Director"
-                        }
-                    }
+                "must": [
+                    {"terms": {id_field: ids}},
+                    {"match": {"credits.crew.job": "Director"}},
                 ]
             }
         },
         sort=[{"popularity": {"order": "desc"}}],
-        size=size
+        size=size,
     )
     return resp["hits"]["hits"]
 
