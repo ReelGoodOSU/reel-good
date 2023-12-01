@@ -205,8 +205,9 @@ function SearchForm() {
             defaultValue={"title"}
           >
             <option value="title">Title</option>
-            <option value="person">Actor</option>
-            <option value="person">Director</option>
+            <option value="?">I don't remember the title (BETA)</option>
+            <option value="credits">Actor</option>
+            <option value="director">Director</option>
             <option value="genres">Genre</option>
             <option value="production_company">Production Company</option>
           </Form.Select>
