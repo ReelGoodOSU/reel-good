@@ -309,10 +309,11 @@ function RecommendationForm() {
             defaultValue={"title"}
           >
             <option value="title">Title</option>
+            <option value="?">Can't recall the name?(BETA)</option>
             <option value="credits">Actor</option>
-            <option value="credits">Director</option>
+            <option value="director">Director</option>
             <option value="genres">Genre</option>
-            <option value="production_companies">Production Company</option>
+            <option value="production_company">Production Company</option>
           </Form.Select>
           {
             // Adding this messes up the styling, figure out how to fix this
