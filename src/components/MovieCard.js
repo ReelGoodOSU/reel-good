@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Col, Card, Form, InputGroup } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import "../App.css";
 
 function MovieCard({ movie }) {
@@ -17,7 +17,7 @@ function MovieCard({ movie }) {
           <p>No available poster</p>
         )}
         <Card.Title>{movie.title}</Card.Title>
-        <a href={`/movies/${movie.id}`} className="stretched-link"></a>
+        <Link href={`/movies/${movie.id}`} className="stretched-link"></Link>
       </Card>
     )
   );

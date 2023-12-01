@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-} from "react-bootstrap";
-import { Link } from "react-router-dom";
-import SearchForm from "../components/SearchForm";
+import { Container, Row, Col, Card } from "react-bootstrap";
+import RecommendationForm from "../components/RecommendationForm";
 
-function HomePage() {
+function RecommendationPage() {
   return (
     <Container fluid className="p-3">
       <Row className="mb-1 mt-2">
@@ -17,12 +11,9 @@ function HomePage() {
         }
         <Col className="mt-5">
           <h1 className="large-bold-yellow">
-            <strong>Reel Good</strong>
+            <strong>Recommendations</strong>
           </h1>
-          <p className="lead text-white">
-            The app that helps you find movies that you will enjoy based on your
-            preferences and ratings.
-          </p>
+          <p className="lead text-white">Select 5 or more movies to begin!</p>
         </Col>
       </Row>
       <Row className="mb-3">
@@ -32,8 +23,7 @@ function HomePage() {
         <Col>
           <Card bg="dark" text="white">
             <Card.Body>
-              <Card.Title>Search Movies</Card.Title>
-              <SearchForm />
+              <RecommendationForm />
             </Card.Body>
           </Card>
         </Col>
@@ -42,4 +32,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default RecommendationPage;
