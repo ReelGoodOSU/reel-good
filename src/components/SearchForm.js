@@ -183,10 +183,11 @@ function SearchForm() {
             defaultValue={"title"}
           >
             <option value="title">Title</option>
+            <option value="?">I don't remember the title (BETA)</option>
             <option value="credits">Actor</option>
-            <option value="credits">Director</option>
+            <option value="director">Director</option>
             <option value="genres">Genre</option>
-            <option value="production_companies">Production Company</option>
+            <option value="production_company">Production Company</option>
           </Form.Select>
           <Form.Control
             name="search_query"
