@@ -17,7 +17,7 @@ function MovieCard({ movie }) {
           <p>No available poster</p>
         )}
         <Card.Title>{movie.title}</Card.Title>
-        <Link href={`/movies/${movie.id}`} className="stretched-link"></Link>
+        <Link to={`/movies/${movie.id}`} className="stretched-link"></Link>
       </Card>
     )
   );
