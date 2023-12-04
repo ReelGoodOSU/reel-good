@@ -59,6 +59,14 @@ function PersonDetails() {
 
   return person ? (
     <Container className="p-3 text-white">
+        {/* Container for the title and back button */}
+        <div className="title-and-back-button-container">
+            <h1 className="large-bold-yellow">Actor Details</h1>
+            {/* Back button */}
+            <button onClick={() => window.history.back()} className="App-link back-button">
+            Back
+            </button>
+        </div>
       <Row>
         <Col>
           <Image
@@ -93,6 +101,7 @@ function PersonDetails() {
             </Card.Body>
           </Card>
         </Col>
+
       </Row>
       <Row className="flex-nowrap overflow-auto" sm={4}>
         {movies ? (
