@@ -50,6 +50,53 @@ body {
   cursor: pointer;
 }
 
+.title-and-back-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px; /* Adjust as needed */
+  }
+
+  .back-button {
+    background-color: yellow;
+    color: black;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    background-color: gold;
+}
+
+.movie-info-section {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 20px;
+    margin-bottom: 30px; /* Space between movie info and additional info */
+}
+
+.movie-poster {
+    max-width: 30%; /* Adjust as needed */
+    height: auto;
+}
+
+.movie-text-content {
+    max-width: 70%; /* Adjust as needed */
+}
+
+.movie-title {
+    margin-top: 0;
+    margin-bottom: 10px; /* Spacing between title and description */
+}
+
+.additional-info-section {
+    margin-top: 20px;
+}
+  
+
 .clickable-card:hover {
   background-color: grey; /* Change background color on hover to indicate interactivity */
 }
