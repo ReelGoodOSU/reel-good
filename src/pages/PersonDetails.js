@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Accordion, Spinner, Card } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Accordion,
+  Spinner,
+  Card,
+  Button,
+} from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { useParams } from "react-router-dom";
 import MovieCard from "../components/MovieCard";
@@ -59,6 +67,14 @@ function PersonDetails() {
 
   return person ? (
     <Container className="p-3 text-white">
+      {/* Container for the title and back button */}
+      <div className="title-and-back-button-container">
+        <h1 className="large-bold-yellow">Actor Details</h1>
+        {/* Back button */}
+        <Button onClick={() => window.history.back()} variant="warning">
+          Back
+        </Button>
+      </div>
       <Row>
         <Col>
           <Image

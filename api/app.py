@@ -44,8 +44,16 @@ def get_elastic_info():
 @app.route("/person/<id>")
 def get_person(id):
     global ES
-    resp = ES.get(index="person", id=id)
-    return resp["_source"]
+    try:
+        # Send get query for actor ID
+        resp = ES.get(
+            index="person", id=id
+        )  # Make sure "person" is the correct index for your actors
+        return resp["_source"], 200
+    except Exception as e:
+        # Log the exception
+        print(f"Error fetching actor data: {e}")
+        return {"error": "Error fetching actor data"}, 500
 
 
 @app.route("/search")

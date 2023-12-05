@@ -7,7 +7,7 @@ function MovieCard({ movie }) {
   // Format each movie entry as a card, just use image and title
   return (
     movie && (
-      <Card>
+      <Card className="h-100">
         {movie.poster_path ? (
           <Card.Img
             variant="top"
@@ -17,7 +17,7 @@ function MovieCard({ movie }) {
           <p>No available poster</p>
         )}
         <Card.Title>{movie.title}</Card.Title>
-        <Link href={`/movies/${movie.id}`} className="stretched-link"></Link>
+        <Link to={`/movies/${movie.id}`} className="stretched-link"></Link>
       </Card>
     )
   );
