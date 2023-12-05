@@ -21,21 +21,6 @@ def get_current_time():
     return {"time": time.time()}
 
 
-@app.route("/actors/<actor_id>")
-def get_actorData(actor_id):
-    global ES
-    try:
-        # Send get query for actor ID
-        resp = ES.get(
-            index="person", id=actor_id
-        )  # Make sure "person" is the correct index for your actors
-        return resp["_source"], 200
-    except Exception as e:
-        # Log the exception
-        print(f"Error fetching actor data: {e}")
-        return {"error": "Error fetching actor data"}, 500
-
-
 @app.route("/movies/<movie_id>")
 def get_movie_data(movie_id):
     global ES
@@ -59,8 +44,16 @@ def get_elastic_info():
 @app.route("/person/<id>")
 def get_person(id):
     global ES
-    resp = ES.get(index="person", id=id)
-    return resp["_source"]
+    try:
+        # Send get query for actor ID
+        resp = ES.get(
+            index="person", id=id
+        )  # Make sure "person" is the correct index for your actors
+        return resp["_source"], 200
+    except Exception as e:
+        # Log the exception
+        print(f"Error fetching actor data: {e}")
+        return {"error": "Error fetching actor data"}, 500
 
 
 @app.route("/search")

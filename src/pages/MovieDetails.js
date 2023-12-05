@@ -69,7 +69,7 @@ function MovieDetails() {
       const fetchActors = async () => {
         const actorDetails = await Promise.all(
           movie.credits.cast.map(async (actor) => {
-            const response = await fetch(`/actors/${actor.id}`);
+            const response = await fetch(`/person/${actor.id}`);
             const data = await response.json();
             return {
               ...actor,
