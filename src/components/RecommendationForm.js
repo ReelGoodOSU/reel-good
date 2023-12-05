@@ -174,9 +174,9 @@ function RecommendationForm() {
               // For each hit we receive render an entry (title and description) for it
             }
             <Container>
-              <Row>
+              <Row sm={3} md={4} lg={5}>
                 {data.map((hit) => (
-                  <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
+                  <Col>
                     <SearchResult
                       hit={hit}
                       key={hit["_id"]}
@@ -264,23 +264,21 @@ function RecommendationForm() {
           Get Recommendations
         </Button>
         {recommendations.length > 0 && (
-          <div>
-            <h3>Recommendations:</h3>
-            <ul>
-              <Col xs={8} md={9} lg={10}>
-                <Row g={false}>
-                  {recommendations.map((recommendation) => (
-                    <Col xs={12} sm={6} lg={6} xl={6} xxl={4}>
-                      <RecommendationResult
-                        hit={recommendation}
-                        key={recommendation["_id"]}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              </Col>
-            </ul>
-          </div>
+          <Container>
+            <Row>
+              <h3>Recommendations:</h3>
+            </Row>
+            <Row g={false} xs={1} sm={3}>
+              {recommendations.map((recommendation) => (
+                <Col>
+                  <RecommendationResult
+                    hit={recommendation}
+                    key={recommendation["_id"]}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </Container>
         )}
       </div>
     );
@@ -294,7 +292,11 @@ function RecommendationForm() {
     };
 
     if (selectedMovies.length > 0)
-      return <Button variant="danger" onClick={handleClick}>Clear Selection</Button>;
+      return (
+        <Button variant="danger" onClick={handleClick}>
+          Clear Selection
+        </Button>
+      );
   };
 
   // Generate the HTML to return
