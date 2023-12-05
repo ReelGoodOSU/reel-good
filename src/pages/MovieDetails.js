@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import "../App.css";
-import { Container, Spinner, Card, Row, Col, Button } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { Container, Spinner, Card, Row, Col, Button } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 import ActorCard from "../components/ActorCard";
 import MovieCard from "../components/MovieCard";
-
 
 function MovieDetails() {
   const [movie, setMovie] = useState(null);
@@ -13,7 +12,7 @@ function MovieDetails() {
   const location = useLocation();
 
   // Extract the movieId from the URL path
-  const movieId = location.pathname.split('/').pop();
+  const movieId = location.pathname.split("/").pop();
 
   useEffect(() => {
     // Define an async function that will fetch the movie data
@@ -36,122 +35,128 @@ function MovieDetails() {
       }
     };
 
-
     // Call the function
     fetchMovieData();
   }, [movieId]); // The effect will re-run if movieId changes
 
   useEffect(() => {
     if (movie && movie.recommendations) {
-        const fetchRecommendedMovies = async () => {
-            const moviesDetails = await Promise.all(movie.recommendations.map(async (movieId) => {
-                const response = await fetch(`/movies/${movieId}`);
-                const data = await response.json();
-                return data; // Assuming the response contains the movie details
-            }));
-            setRecommendedMovies(moviesDetails);
-        };
+      const fetchRecommendedMovies = async () => {
+        const moviesDetails = await Promise.all(
+          movie.recommendations.map(async (movieId) => {
+            const response = await fetch(`/movies/${movieId}`);
+            const data = await response.json();
+            return data; // Assuming the response contains the movie details
+          })
+        );
+        setRecommendedMovies(moviesDetails);
+      };
 
-        fetchRecommendedMovies();
+      fetchRecommendedMovies();
     }
-}, [movie]);
+  }, [movie]);
 
   useEffect(() => {
     if (movie && movie.credits && movie.credits.cast) {
-        const fetchActors = async () => {
-            const actorDetails = await Promise.all(movie.credits.cast.map(async (actor) => {
-                const response = await fetch(`/actors/${actor.id}`);
-                const data = await response.json();
-                return { ...actor, name: data.name , profile_path: data.profile_path};
-            }));
-            setActors(actorDetails);
-        };
+      const fetchActors = async () => {
+        const actorDetails = await Promise.all(
+          movie.credits.cast.map(async (actor) => {
+            const response = await fetch(`/actors/${actor.id}`);
+            const data = await response.json();
+            return {
+              ...actor,
+              name: data.name,
+              profile_path: data.profile_path,
+            };
+          })
+        );
+        setActors(actorDetails);
+      };
 
-        fetchActors();
+      fetchActors();
     }
-}, [movie]);
+  }, [movie]);
 
-    // Render logic goes here - for now, let's just render JSON to the screen
-    return (
-        <Container className="p-3 text-white">
-        {/* Container for the title and back button */}
-        <div className="title-and-back-button-container">
-            <h1 className="large-bold-yellow">Movie Details</h1>
-            {/* Back button */}
-            <Button onClick={() => window.history.back()} variant="warning">
-            Back
-            </Button>
-        </div>
+  // Render logic goes here - for now, let's just render JSON to the screen
+  return (
+    <Container className="p-3 text-white">
+      {/* Container for the title and back button */}
+      <div className="title-and-back-button-container">
+        <h1 className="large-bold-yellow">Movie Details</h1>
+        {/* Back button */}
+        <Button onClick={() => window.history.back()} variant="warning">
+          Back
+        </Button>
+      </div>
 
-                {/* get the json and print it
+      {/* get the json and print it
             <pre className="lead text-white">{JSON.stringify(movie, null, 2)}</pre>
             */}
 
-        {movie ? (
-            <Card>
-                <Row noGutters>
-                    <Col md={4}>
-                        <Card.Img
-                            variant="top"
-                            src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-                            alt="Movie Poster"
-                        />
-                    </Col>
-                    <Col md={8}>
-                        <Card.Body>
-                            <Card.Title>{movie.title}</Card.Title>
-                            <Card.Text>
-                                {movie.overview}
-                            </Card.Text>
-                        </Card.Body>
-                    </Col>
-                </Row>
+      {movie ? (
+        <Card>
+          <Row noGutters>
+            <Col md={4}>
+              <Card.Img
+                variant="top"
+                src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+                alt="Movie Poster"
+              />
+            </Col>
+            <Col md={8}>
+              <Card.Body>
+                <Card.Title>{movie.title}</Card.Title>
+                <Card.Text>{movie.overview}</Card.Text>
+              </Card.Body>
+            </Col>
+          </Row>
 
-                <Card.Title>Cast</Card.Title>
+          <Card.Title>Cast</Card.Title>
 
-                <Row noGutters style={{height: 'auto'}} className="flex-nowrap overflow-auto" sm={4}>
-                    {actors ? (
-                    actors.slice(0, 25).map((actor) => {
-                        return (
-                        <Col>
-                            <ActorCard actor={actor} />
-                        </Col>
-                        );
-                    })
-                    ) : (
-                    <Spinner animation="border" role="status" className="mx-auto">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                    )}
-                </Row>
+          <Row
+            noGutters
+            style={{ height: "auto" }}
+            className="flex-nowrap overflow-auto"
+            sm={4}
+          >
+            {actors ? (
+              actors.slice(0, 25).map((actor) => {
+                return (
+                  <Col>
+                    <ActorCard actor={actor} />
+                  </Col>
+                );
+              })
+            ) : (
+              <Spinner animation="border" role="status" className="mx-auto">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            )}
+          </Row>
 
-                <Card.Title>Recommendations</Card.Title>
+          <Card.Title>Recommendations</Card.Title>
 
-                <Row className="flex-nowrap overflow-auto" sm={4}>
-                    {recommendedMovies ? (
-                    recommendedMovies.slice(0, 25).map((recommendedMovie) => {
-                        return (
-                        <Col>
-                            <MovieCard movie={recommendedMovie} />
-                        </Col>
-                        );
-                    })
-                    ) : (
-                    <Spinner animation="border" role="status" className="mx-auto">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                    )}
-                </Row>
-
-            </Card>
-        ) : (
-            <p className="lead text-white">Loading...</p>
-        )}
-        </Container>
-    );
-
-
+          <Row className="flex-nowrap overflow-auto" sm={4}>
+            {recommendedMovies ? (
+              recommendedMovies.slice(0, 25).map((recommendedMovie) => {
+                return (
+                  <Col>
+                    <MovieCard movie={recommendedMovie} />
+                  </Col>
+                );
+              })
+            ) : (
+              <Spinner animation="border" role="status" className="mx-auto">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            )}
+          </Row>
+        </Card>
+      ) : (
+        <p className="lead text-white">Loading...</p>
+      )}
+    </Container>
+  );
 }
-
 
 export default MovieDetails;
