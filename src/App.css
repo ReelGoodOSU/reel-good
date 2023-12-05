@@ -79,7 +79,6 @@ body {
 }
 
 .movie-poster {
-    max-width: 30%; /* Adjust as needed */
     height: auto;
 }
 
@@ -95,7 +94,7 @@ body {
 .additional-info-section {
     margin-top: 20px;
 }
-  
+
 
 .clickable-card:hover {
   background-color: grey; /* Change background color on hover to indicate interactivity */
