@@ -8,7 +8,7 @@ function ActorCard({ actor }) {
   console.log(actor);
   return (
     actor && (
-      <Card>
+      <Card className="h-100">
         {actor.profile_path ? (
           <Card.Img
             variant="top"

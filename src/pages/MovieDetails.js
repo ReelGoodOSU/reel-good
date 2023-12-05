@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
-import { Container, Spinner, Card, Row, Col, Button } from "react-bootstrap";
+import {
+  Container,
+  Spinner,
+  Card,
+  Row,
+  Col,
+  Button,
+  Image,
+} from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import ActorCard from "../components/ActorCard";
 import MovieCard from "../components/MovieCard";
@@ -78,7 +86,7 @@ function MovieDetails() {
   }, [movie]);
 
   // Render logic goes here - for now, let's just render JSON to the screen
-  return (
+  return movie ? (
     <Container className="p-3 text-white">
       {/* Container for the title and back button */}
       <div className="title-and-back-button-container">
@@ -93,69 +101,71 @@ function MovieDetails() {
             <pre className="lead text-white">{JSON.stringify(movie, null, 2)}</pre>
             */}
 
-      {movie ? (
-        <Card>
-          <Row noGutters>
-            <Col md={4}>
-              <Card.Img
-                variant="top"
-                src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-                alt="Movie Poster"
-              />
-            </Col>
-            <Col md={8}>
-              <Card.Body>
-                <Card.Title>{movie.title}</Card.Title>
-                <Card.Text>{movie.overview}</Card.Text>
-              </Card.Body>
-            </Col>
-          </Row>
-
-          <Card.Title>Cast</Card.Title>
-
-          <Row
-            noGutters
-            style={{ height: "auto" }}
-            className="flex-nowrap overflow-auto"
-            sm={4}
-          >
-            {actors ? (
-              actors.slice(0, 25).map((actor) => {
-                return (
-                  <Col>
-                    <ActorCard actor={actor} />
-                  </Col>
-                );
-              })
-            ) : (
-              <Spinner animation="border" role="status" className="mx-auto">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            )}
-          </Row>
-
-          <Card.Title>Recommendations</Card.Title>
-
-          <Row className="flex-nowrap overflow-auto" sm={4}>
-            {recommendedMovies ? (
-              recommendedMovies.slice(0, 25).map((recommendedMovie) => {
-                return (
-                  <Col>
-                    <MovieCard movie={recommendedMovie} />
-                  </Col>
-                );
-              })
-            ) : (
-              <Spinner animation="border" role="status" className="mx-auto">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            )}
-          </Row>
-        </Card>
-      ) : (
-        <p className="lead text-white">Loading...</p>
-      )}
+      <Row noGutters>
+        <Col md={4}>
+          <Image
+            variant="top"
+            src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+            alt={movie.title + " poster"}
+            width="100%"
+            rounded
+          />
+        </Col>
+        <Col md={8}>
+          <Card>
+            <Card.Body>
+              <Card.Title className="fs-3 fw-bold">{movie.title}</Card.Title>
+              <Card.Text>{movie.overview}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Row>
+        <h3>Cast</h3>
+      </Row>
+      <Row
+        noGutters
+        style={{ height: "auto" }}
+        className="flex-nowrap overflow-auto"
+        sm={4}
+      >
+        {actors ? (
+          actors.map((actor) => {
+            return (
+              <Col>
+                <ActorCard actor={actor} />
+              </Col>
+            );
+          })
+        ) : (
+          <Spinner animation="border" role="status" className="mx-auto">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        )}
+      </Row>
+      <Row>
+        <h3>Recommendations</h3>
+      </Row>
+      <Row className="flex-nowrap overflow-auto" sm={4}>
+        {recommendedMovies ? (
+          recommendedMovies.map((recommendedMovie) => {
+            return (
+              <Col>
+                <MovieCard movie={recommendedMovie} />
+              </Col>
+            );
+          })
+        ) : (
+          <Spinner animation="border" role="status" className="mx-auto">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        )}
+      </Row>
     </Container>
+  ) : (
+    <Spinner animation="border" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </Spinner>
   );
 }
 

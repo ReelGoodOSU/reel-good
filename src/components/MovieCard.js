@@ -7,7 +7,7 @@ function MovieCard({ movie }) {
   // Format each movie entry as a card, just use image and title
   return (
     movie && (
-      <Card>
+      <Card className="h-100">
         {movie.poster_path ? (
           <Card.Img
             variant="top"
