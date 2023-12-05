@@ -29,7 +29,6 @@ def get_actorData(actor_id):
         resp = ES.get(
             index="person", id=actor_id
         )  # Make sure "person" is the correct index for your actors
-        print(f"Actor data: {resp}")
         return resp["_source"], 200
     except Exception as e:
         # Log the exception

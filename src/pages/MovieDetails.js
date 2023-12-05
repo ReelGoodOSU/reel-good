@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "../App.css";
-import { Container, Spinner, Card, Row, Col } from 'react-bootstrap';
+import { Container, Spinner, Card, Row, Col, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import ActorCard from "../components/ActorCard";
 import MovieCard from "../components/MovieCard";
@@ -25,10 +25,10 @@ function MovieDetails() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        
+
         // Update the movie state with the fetched data
         setMovie(data);
-        
+
         // Log the data to the console
         console.log(data);
       } catch (error) {
@@ -78,11 +78,11 @@ function MovieDetails() {
         <div className="title-and-back-button-container">
             <h1 className="large-bold-yellow">Movie Details</h1>
             {/* Back button */}
-            <button onClick={() => window.history.back()} className="App-link back-button">
+            <Button onClick={() => window.history.back()} variant="warning">
             Back
-            </button>
+            </Button>
         </div>
-    
+
                 {/* get the json and print it
             <pre className="lead text-white">{JSON.stringify(movie, null, 2)}</pre>
             */}
@@ -91,10 +91,10 @@ function MovieDetails() {
             <Card>
                 <Row noGutters>
                     <Col md={4}>
-                        <Card.Img 
-                            variant="top" 
-                            src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`} 
-                            alt="Movie Poster" 
+                        <Card.Img
+                            variant="top"
+                            src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+                            alt="Movie Poster"
                         />
                     </Col>
                     <Col md={8}>
@@ -106,7 +106,7 @@ function MovieDetails() {
                         </Card.Body>
                     </Col>
                 </Row>
-                
+
                 <Card.Title>Cast</Card.Title>
 
                 <Row noGutters style={{height: 'auto'}} className="flex-nowrap overflow-auto" sm={4}>
@@ -149,8 +149,8 @@ function MovieDetails() {
         )}
         </Container>
     );
-  
-  
+
+
 }
 
 

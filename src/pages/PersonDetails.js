@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Accordion, Spinner, Card } from "react-bootstrap";
+import { Container, Row, Col, Accordion, Spinner, Card, Button } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { useParams } from "react-router-dom";
 import MovieCard from "../components/MovieCard";
@@ -63,9 +63,9 @@ function PersonDetails() {
         <div className="title-and-back-button-container">
             <h1 className="large-bold-yellow">Actor Details</h1>
             {/* Back button */}
-            <button onClick={() => window.history.back()} className="App-link back-button">
+            <Button onClick={() => window.history.back()} variant="warning">
             Back
-            </button>
+            </Button>
         </div>
       <Row>
         <Col>
